@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chat App</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: sans-serif;
+            }
+
+            .container {
+                display: flex;
+                height: 100vh;
+            }
+
+            .chat {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .overlay {
+                width: 320px;
+                background: "2f3542";
+                color: white;
+                padding: 15px;
+                overflow-y: auto;
+                border-left: 3px solid #444;
+            }
+
+            .panel {
+                margin-bottom: 20px;
+                padding: 10px;
+                background: #404756;
+                border-radius: 8px;
+            }
+
+            .panel h3 {
+                margin-top: 0;
+            }
+
+
+            
+            .messages {
+                flex: 1;
+                overflow-y: auto;
+                list-style: none;
+                padding: 10px;
+                margin: 0;
+                background: #f5f5f5;
+
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+            }
+
+            .messages li{
+                margin: 8px 0;
+                padding: 10px;
+                border-radius: 10px;
+                max-width: 70%;
+                word-break: break-word;
+            }
+
+            .my-message {
+                margin-left: auto;
+                background: #ffffff;
+            }
+
+            .other-message {
+                margin-right: auto;
+                background: white;
+            }
+            
+            .form {
+                display: flex;
+                border-top: 1px solid #ccc;
+            }
+            .input {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+            .submit {
+                padding: 10px;
+                border: 1px solid #ccc;
+                background: #eee;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+    <div class="container">
+
+        <!--チャット画面-->>
+        <div class="chat">
+            <ul class="messages"></ul>
+
+            <form class="form">
+                <input class="input" autocomplete="off" placeholder="メッセージを入力">
+                <button class="submit">Send</button>
+            </form>
+        </div>
+
+        <!--ゲーム内情報-->>
+        <aside class="overlay">
+            <h2>ゲーム情報</h2>
+
+            <div class="panel">
+                <h3>ユーザー情報</h3>
+                <ul id="userinfo">
+                    <li>名前: ディス</li>
+                    <li>Cランクの人間</li>
+                    <li>勤務先: 総合指示施設</li>
+                    <li>仕事内容: 画面上に指示されたボタンを押す</li>
+                    <li>移動制限: 職場と自宅以外の移動には申請が必要</li>
+                </ul>
+            </div>
+
+            <div class="panel">
+                <h3>現在の状況</h3>
+                <p id="status">
+                    あなたは優秀な闇市の人を探しています。
+                </p>
+            </div>
+
+            <div class="panel">
+                <h3>持っている情報</h3>
+                <ul id="infoList">
+                    <li>「ピアがアンドロイド」</li>
+                    <li>アンドロイドは処分対象である</li>
+                </ul>
+            </div>
+
+            <div class="panel">
+                <h3>現在のタスク</h3>
+                <ul id="taskList">
+                    <li>街を出る方法を探す</li>
+                    <li>偽造申請許可証を闇市で手に入れる</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="kadai.js"></script>
+    </body>
+</html>

@@ -1,0 +1,134 @@
+body {
+    background-image: url("dhisutopia.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.overlay {
+    width: 320px;
+    background: #2f3542;
+    color: white;
+    padding: 15px;
+    overflow-y: auto;
+    border-left: 3px solid #444;
+}
+
+.panel {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #404756;
+    border-radius: 8px;
+}
+
+.panel h3 {
+    margin-top: 0;
+}
+            
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    background: transparent;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.message {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin: 8px 0;
+}
+    
+.message.my {
+    justify-content: flex-start;
+}
+
+.message.other {
+    justify-content: flex-end;
+}
+
+.username {
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.bubble {
+    display: inline-block;
+    width: fit-content;
+    max-width: 70%;
+    padding: 10px 16px;
+    border-radius: 18px;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.message.my .bubble {
+    background: #dbeafe;
+}
+
+.message.other .bubble {
+    background: white;
+}
+
+.form {
+    display: flex;
+    border-top: 1px solid #ccc;
+}
+
+.input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.submit {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #eee;
+    cursor: pointer;
+}
+
+.choices{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.choice {
+    display: inline-block;
+    width: fit-content;
+    max-width: 70%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    background: #dbeafe;
+    transition: 0.2s;
+    text-align: left;
+    white-space: normal;
+}
+
+.choice:hover{
+    background: #bfdbfe;
+}

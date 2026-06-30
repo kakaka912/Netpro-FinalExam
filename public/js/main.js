@@ -16,13 +16,28 @@
         function addMessage(id, username, text) {
             const li = document.createElement("li");
 
+             //ユーザ名
+            const name = document.createElement("span");
+            name.classList.add("username");
+            name.textContent = username;
+
+            //吹き出し
+            const bubble = document.createElement("div");
+            bubble.classList.add("bubble");
+            bubble.textContent = text;
+
             if (id === myId) {
-                    li.classList.add("my-message");
-                    li.textContent = `${username}: ${text}`;
+                    li.classList.add("message", "my");
+
+                    li.appendChild(name);
+                    li.appendChild(bubble);
                 } else {
-                    li.classList.add("other-message");
-                    li.textContent = `${username} : ${text}`;
+                    li.classList.add("message", "other");
+
+                    li.appendChild(bubble);
+                    li.appendChild(name);
                 }
+
                 messageList.appendChild(li)
                 messageList.scrollTop = messageList.scrollHeight;
         }
@@ -51,18 +66,32 @@
         //     }
         // };
 
-        
-
-        form.onsubmit = function (e) {
-            e.preventDefault();
-            const text = input.value.trim();
-            // ws.send(JSON.stringify({ id: myId, username: username, text, type: 'chat' }))
+        //メッセージ送信
+        function sendMessage(text) {
+            text = text.trim();
             if(text === "") return;
+
+            // ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
+
             addMessage(myId, username, text);
 
-            input.value = '';
+            input.value = "";
             input.focus();
         }
+
+        //フォーム送信
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            sendMessage(input.value);
+        }
+
+        const choices = document.querySelectorAll(".choice");
+
+        choices.forEach(choice => {
+            choice.onclick = function () {
+                sendMessage(choice.textContent);
+            };
+        });
 
         // ws.onerror = function (error) {
         //     console.error('WebSocket Error: ', error)

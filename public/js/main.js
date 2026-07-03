@@ -1,4 +1,5 @@
-        
+        const ws = new WebSocket("ws://localhost:3000/ws");
+
         const myId = crypto.randomUUID();
         let username = "";
 
@@ -79,20 +80,20 @@
             li.textContent = task;
             tasklist.appendChild(li);
         }
-        // ws.onmessage = (event) => {
-        //     const msg = JSON.parse(event.data)
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data)
 
-        //     if (msg.type === 'chat') {
-        //         addMessage(msg.id, msg.username, msg.text);
-        //     }
-        // };
+            if (msg.type === 'chat') {
+                addMessage(msg.id, msg.username, msg.text);
+             }
+         };
 
         //メッセージ送信
         function sendMessage(text) {
             text = text.trim();
             if(text === "") return;
 
-            // ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
+            ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
 
             addMessage(myId, username, text);
 

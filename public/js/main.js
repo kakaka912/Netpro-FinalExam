@@ -1,6 +1,27 @@
 
         const myId = crypto.randomUUID();
-        const username = prompt("ユーザー名を入力してください") || "AI";
+        let username = "";
+
+        const loginScreen = document.getElementById("loginScreen");
+        const usernameInput = document. getElementById("usernameInput");
+        const loginButton = document.getElementById("loginButton");
+
+        const chatScreen = document.getElementById("chatScreen");
+
+        loginButton.onclick = () => {
+            const name = usernameInput.value.trim();
+
+            if(name === "") {
+                alert("ユーザー名を入力してください");
+                return;
+            }
+
+            username = name;
+
+            loginScreen.style.display = "none";
+            chatScreen.style.display = "flex";
+            input.focus();
+        }
 
         const messageList = document.querySelector(".messages");
         const form = document.querySelector('.form');

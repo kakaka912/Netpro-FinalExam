@@ -7,6 +7,54 @@ body {
     font-family: sans-serif;
 }
 
+.login-screen {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+}
+
+.login-box {
+    width: 350px;
+    padding: 30px;
+
+    background: white;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    border-radius: 12px;
+    color: black;
+    text-align: center;
+}
+
+.login-box h2 {
+    margin-top: 0;
+}
+.login-box input {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 20px 0;
+    padding: 12px;
+
+    border: none;
+    border-radius: 8px;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 12px;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+    font-size: 16px;
+}
 .container {
     display: flex;
     height: 100vh;
@@ -16,11 +64,17 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    min-height: 0;
+}
+
+#chatScreen {
+    display: none;
 }
 
 .overlay {
     width: 320px;
-    background: #2f3542;
+    background: rgba(47, 53, 66, 0.7);
     color: white;
     padding: 15px;
     overflow-y: auto;
@@ -39,16 +93,17 @@ body {
 }
             
 .messages {
-    flex: 1;
+    flex: 1 1 0;
+    min-height: 0;
     overflow-y: auto;
-    list-style: none;
-    padding: 10px;
-    margin: 0;
-    background: transparent;
 
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    gap: 10px;
+
+    list-style: none;
+    padding: 10px;
+    margin: 0;
 }
 
 .message {
@@ -93,6 +148,7 @@ body {
 .form {
     display: flex;
     border-top: 1px solid #ccc;
+    flex-shrink: 0;
 }
 
 .input {
@@ -112,7 +168,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    align-items: flex-start;
+    align-items: stretch;
+    flex-shrink: 0;
+
+    padding: 15px;
+    background: rgba(143, 143, 143, 0.6);
 }
 
 .choice {

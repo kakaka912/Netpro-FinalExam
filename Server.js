@@ -50,16 +50,13 @@ const scenarioD_report = [
 
 const scenarioD_Work = [
     { speaker: "Ai Min", text: "幸せな日々の為に。" },
-
     { speaker: "システム", text: "【仕事場】" },
     { speaker: "Computer", type: "typing"}
 ];
 
 const scenarioD_Trouble = [
     { speaker: "Ai Wo", text: "システムエラーが発生。原因調査中" },
-
     { speaker: "Ai Wo", text: "内部プロトコルに異常検知。自動修復実行" },
-
     { speaker: "Ai Wo", text: "自動修復に失敗。アプリケーションを再起動" }
 ];
 
@@ -71,7 +68,7 @@ const scenarioP_WakeUp = [
     { speaker: "システム", text: "【Bランク地区-avocadoビルディング】" },
     { speaker: "Ai Min", text: "おはようございます！ 本日も素晴らしい朝がやってきました。" },
     { speaker: "Ai Min", text: `ただいま ${todayText} 8 時 00 分です。最高気温は 38℃ 最低気温は 29℃の予報です。` },
-    { speaker: "Ai Min", text: "P-0901様に 特別な連絡が 2 件ございます。" },
+    { speaker: "P-0901様に 特別な連絡が 2 件ございます。" },
     { speaker: "Ai Min", text: "・隣人報告のお願い" },
     { speaker: "Ai Min", text: "詳細をお読みします。" },
     { speaker: "Ai Min", text: "『〇〇の市民は 治安維持のため 反政府組織の疑いがある人物を 報告することが 義務付けられています。" },
@@ -81,10 +78,8 @@ const scenarioP_WakeUp = [
 
 const scenarioP_Work = [
     { speaker: "Ai Min", text: "幸せな日々の為に。" },
-
     { speaker: "システム", text: "【仕事場】" },
     { speaker: "Ai Wo", text: "コールがかかるまでお待ちください" },
-
     { speaker: "Ai Wo", text: "コール受信" },
     { speaker: "Ai Wo", text: "簡易処理のためAIによるサポートが実施されます。" },
     { speaker: "Ai Wo", text: "エラーナンバーは『1-0-2』です。" },
@@ -140,15 +135,15 @@ io.on('connection', (socket) => {
         return;
     }
     playerCount++;
-    console.log('新しいプレイヤーが接続しました。現在の接続人数：${playerCount}人');
+    console.log(`新しいプレイヤーが接続しました。現在の接続人数：${playerCount}人`);
 
     if (playerCount === 1) {
         socket.join('room-D') // 1人目がディス
-        socket.emit('assiged-role', 'D-2519');
+        socket.emit('assigned-role', 'D-2519'); // タイポ修正 assiged -> assigned
         console.log('一人目のプレイヤーに割り当て')
     } else if (playerCount === 2){
         socket.join('room-P') // 2人目がピア
-        socket.emit('assiged-role', 'P-0901');
+        socket.emit('assigned-role', 'P-0901'); // タイポ修正 assiged -> assigned
         console.log('二人目のプレイヤーに割り当て ゲームを開始');
 
         startGame();
@@ -171,19 +166,19 @@ io.on('connection', (socket) => {
 
         if(data.role === 'D-2519'){
             if(data.choice === '定期検査'){
-                io.to('room-D').emit('receive-scenario', scenarioD_inspection);
-            } else if (data.choice === '隣人評価'){
-                io.to('room-D').emit('receive-scenario', scenarioD_report);
+                changeScenarioD(scenarioD_inspection);
+            } else if (data.choice === '隣人評価' || data.choice === '隣人報告'){
+                changeScenarioD(scenarioD_report);
             } else if (data.choice === 'なし'){
-                io.to('room-D').emit('receive-scenario', scenarioD_Work);
+                changeScenarioD(scenarioD_Work);
             }
         }else if(data.role === 'P-0901'){
             if(data.choice === '確認した'){
-                io.to('room-P').emit('receive-scenario', scenarioP_Work);
+                changeScenarioP(scenarioP_Work);
             }else if (data.choice === '[1-0-2] マニュアルを開く'){
-                io.to('room-P').emit('receive-scenario', scenarioP_manualTutorial);
+                changeScenarioP(scenarioP_manualTutorial);
             }else if (data.choice === 'システムを再起動してください'){
-                io.to('room-P').emit('receive-scenario', scenarioP_wait);
+                changeScenarioP(scenarioP_wait);
             }
         }
     });
@@ -205,7 +200,8 @@ function startGame() {
     activeScenarioD = scenarioD_WakeUp;
     activeScenarioP = scenarioP_WakeUp;
     
-    io.to('room-D').emit('next-line', acriveScenarioD[currentLineD]);
+    // acriveScenarioD のタイポを activeScenarioD に修正
+    io.to('room-D').emit('next-line', activeScenarioD[currentLineD]);
     io.to('room-P').emit('next-line', activeScenarioP[currentLineP]);
 }
 
@@ -274,4 +270,4 @@ function changeScenarioP(newScenario) {
 http.listen(PORT, '0.0.0.0', () => {
     console.log(`サーバーが正常に起動しました。`)
     console.log(`ブラウザで http://localhost:${PORT} を開くとゲームが遊べます。`)
-})
+});

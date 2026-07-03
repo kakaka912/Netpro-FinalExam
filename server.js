@@ -135,7 +135,7 @@ io.on('connection', (socket) => {
 
     if(playerCount >= 2){
         console.log('満員の為、第三者の接続を拒否しました。');
-        socket.emit('room-full', 'サーバーが満員です。時間をおいてお試しください');
+        socket.emit('room-full', 'サーバーが満員です。時間をおいてお試しください。');
         socket.disconnect();
         return;
     }

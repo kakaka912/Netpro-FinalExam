@@ -1,0 +1,16 @@
+{
+  "name": "inazuma-dangan-chat-server",
+  "version": "1.0.0",
+  "description": "Chat Game Server for Render",
+  "main": "Sever.js",
+  "scripts": {
+    "start": "node Sever.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

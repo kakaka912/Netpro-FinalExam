@@ -1,4 +1,3 @@
-        const socket = io();
         
         const myId = crypto.randomUUID();
         let username = "";

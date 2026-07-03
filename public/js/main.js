@@ -64,6 +64,14 @@
                 messageList.scrollTop = messageList.scrollHeight;
         }
 
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+
+            if(msg.type === 'chat') {
+                addMessage(msg.id, msg.username, msg.text);
+            }
+        };
+
         //オーバーレイの更新
         function updateStatus(text) {
             status.textContent = text;

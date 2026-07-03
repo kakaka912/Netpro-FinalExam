@@ -1,4 +1,3 @@
-        const socket = io();
         
         const myId = crypto.randomUUID();
         let username = "";
@@ -80,13 +79,13 @@
             li.textContent = task;
             tasklist.appendChild(li);
         }
-        // ws.onmessage = (event) => {
-        //     const msg = JSON.parse(event.data)
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data)
 
-        //     if (msg.type === 'chat') {
-        //         addMessage(msg.id, msg.username, msg.text);
-        //     }
-        // };
+            if (msg.type === 'chat') {
+                addMessage(msg.id, msg.username, msg.text);
+            }
+        };
 
         //メッセージ送信
         function sendMessage(text) {
@@ -115,11 +114,11 @@
             };
         });
 
-        // ws.onerror = function (error) {
-        //     console.error('WebSocket Error: ', error)
-        // }
+        ws.onerror = function (error) {
+            console.error('WebSocket Error: ', error)
+        }
         
-        // ws.onopen = () => {
-        //     console.log("WebSocket Connected");
-        // };
+        ws.onopen = () => {
+            console.log("WebSocket Connected");
+        };
         

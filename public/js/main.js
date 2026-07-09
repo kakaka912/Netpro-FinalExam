@@ -94,8 +94,6 @@
 
             // ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
 
-            addMessage(myId, username, text);
-
             input.value = "";
             input.focus();
         }

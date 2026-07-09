@@ -1,7 +1,8 @@
-        const ws = new WebSocket("wss://netpro-finalexam.onrender.com/ws");
+    const ws = new WebSocket("wss://netpro-finalexam.onrender.com/ws");
 
         const myId = crypto.randomUUID();
         let username = "";
+        let myRole = "";
 
         const loginScreen = document.getElementById("loginScreen");
         const usernameInput = document. getElementById("usernameInput");
@@ -64,13 +65,67 @@
                 messageList.scrollTop = messageList.scrollHeight;
         }
 
-        ws.onmessage = (event) => {
-            const msg = JSON.parse(event.data);
+        ws.onmessage = (event)=>{
 
-            if(msg.type === 'chat') {
-                addMessage(msg.id, msg.username, msg.text);
+            const data = JSON.parse(event.data);
+
+            //役割
+            if(data.type === "assigned-role"){
+                myRole = data.role;
+                console.log("役割:", myRole);
+            }
+
+            //シナリオ
+            if(data.type === "next-line"){
+
+                const line = data.data;
+
+
+                // 選択肢の場合
+                if(line.type === "choice"){
+
+                    showChoices(line.choices);
+
+                }else{
+
+                    hideChoices();
+
+                    showMessage(line.speaker,line.text);
+                }
+            }
+
+            //チャット受信
+            if(data.type === "chat"){
+
+                addMessage( data.id, data.username, data.text);
             }
         };
+
+        //選択肢表示関数
+        function showChoices(choices){
+
+            const area = document.getElementById("choices");
+            area.innerHTML="";
+
+            choices.forEach(choice=>{
+                const button = document.createElement("button");
+                button.className="choice";
+                button.textContent=choice;
+                
+                button.onclick=()=>{
+                    ws.send(JSON.stringify({ type:"player-choice", role:myRole, choice:choice }));
+                    hideChoices();
+                };
+                area.appendChild(button);
+            });
+        }
+
+        //選択肢を閉じる
+        function hideChoices(){
+
+            const area = document.getElementById("choices");
+            area.innerHTML="";
+        }
 
         //オーバーレイの更新
         function updateStatus(text) {
@@ -88,13 +143,6 @@
             li.textContent = task;
             tasklist.appendChild(li);
         }
-        ws.onmessage = (event) => {
-            const msg = JSON.parse(event.data)
-
-            if (msg.type === 'chat') {
-                addMessage(msg.id, msg.username, msg.text);
-             }
-         };
 
         //メッセージ送信
         function sendMessage(text) {
@@ -112,14 +160,6 @@
             e.preventDefault();
             sendMessage(input.value);
         }
-
-        const choices = document.querySelectorAll(".choice");
-
-        choices.forEach(choice => {
-            choice.onclick = function () {
-                sendMessage(choice.textContent);
-            };
-        });
 
         // ws.onerror = function (error) {
         //     console.error('WebSocket Error: ', error)

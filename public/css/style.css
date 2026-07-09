@@ -7,6 +7,16 @@ body {
     font-family: sans-serif;
 }
 
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background: rgba(59, 67, 85, 0.7);
+
+    z-index: -1;
+}
+
 .login-screen {
     position: fixed;
     inset: 0;
@@ -23,7 +33,7 @@ body {
     width: 350px;
     padding: 30px;
 
-    background: white;
+    background: #262936;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 
@@ -33,6 +43,7 @@ body {
 }
 
 .login-box h2 {
+    color: white;
     margin-top: 0;
 }
 .login-box input {
@@ -40,6 +51,7 @@ body {
     box-sizing: border-box;
     margin: 20px 0;
     padding: 12px;
+    background: #9a99ab;
 
     border: none;
     border-radius: 8px;
@@ -48,6 +60,8 @@ body {
 .login-box button {
     width: 100%;
     padding: 12px;
+
+    background-color: #9a99ab;
 
     border: none;
     border-radius: 8px;
@@ -123,7 +137,7 @@ body {
 
 .username {
     font-size: 12px;
-    color: #666;
+    color: #ddd;
     white-space: nowrap;
 }
 
@@ -132,17 +146,19 @@ body {
     width: fit-content;
     max-width: 70%;
     padding: 10px 16px;
-    border-radius: 18px;
+    border-radius: 8px;
     word-break: break-word;
     white-space: pre-wrap;
+
+    color: white;
 }
 
 .message.my .bubble {
-    background: #dbeafe;
+    background: #363c43;
 }
 
 .message.other .bubble {
-    background: white;
+    background: #234555;
 }
 
 .form {
@@ -153,14 +169,17 @@ body {
 
 .input {
     flex: 1;
+    height: 200px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #9a99ab;
+    box-sizing: border-box;
+    background-color: #9a99ab;
 }
 
 .submit {
     padding: 10px;
-    border: 1px solid #ccc;
-    background: #eee;
+    border: 1px solid #8c92a9;
+    background: #8c92a9;
     cursor: pointer;
 }
 
@@ -172,7 +191,7 @@ body {
     flex-shrink: 0;
 
     padding: 15px;
-    background: rgba(143, 143, 143, 0.6);
+    background: rgba(74, 76, 108, 0.6);
 }
 
 .choice {
@@ -181,14 +200,15 @@ body {
     max-width: 70%;
     padding: 10px 16px;
     border: none;
-    border-radius: 18px;
+    border-radius: 8px;
     cursor: pointer;
-    background: #dbeafe;
+    background: #2f3c4c;
+    color: #88878e;
     transition: 0.2s;
     text-align: left;
     white-space: normal;
 }
 
 .choice:hover{
-    background: #bfdbfe;
+    background: #384555;
 }

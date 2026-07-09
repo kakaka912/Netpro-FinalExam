@@ -8,7 +8,7 @@
         const usernameInput = document. getElementById("usernameInput");
         const loginButton = document.getElementById("loginButton");
 
-        const chatScreen = document.getElementById("chatScreen");
+        const chatScreen = document.querySelector(".container");
 
         loginButton.onclick = () => {
             const name = usernameInput.value.trim();

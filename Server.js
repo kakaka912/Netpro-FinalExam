@@ -128,10 +128,10 @@ let currentLineP = 0;
 let activeScenarioD = scenarioD_WakeUp;
 let activeScenarioP = scenarioP_WakeUp;
 
-// ─── WebSocket通信の受け口 ───
+// 通信時
 app.ws('/ws', (ws, req) => {
     
-    // 満員チェック（3人目以降は切断）
+    // 満員チェック
     if (playerCount >= 2) {
         console.log('満員の為、第三者の接続を拒否しました。');
         ws.send(JSON.stringify({ type: 'room-full', text: 'サーバーが満員です。時間をおいてお試しください。' }));
@@ -152,12 +152,23 @@ app.ws('/ws', (ws, req) => {
         ws.role = 'P-0901';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901' }));
         console.log('二人目のプレイヤーにP-0901を割り当て ゲームを開始');
-        
-        startGame();
     }
 
     // クライアントからメッセージを受け取った時の処理
     ws.on('message', (raw) => {
+        try{
+            const data = JSON.parse(raw.toString());
+            if(data.type === 'chat'){
+                const sendData = {
+                    type:'chat',
+                    username: data.username || '名無し',
+                    text: data.text || ''
+                };
+                broadcast(sendData);
+                }
+            } catch (e) {
+                console.error('データの解析に失敗しました', e);
+            }
         const data = JSON.parse(raw.toString());
 
         // 1. 画面をクリックして次のセリフを要求された時

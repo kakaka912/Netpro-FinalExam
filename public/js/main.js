@@ -1,4 +1,5 @@
-        
+        const ws = new WebSocket("wss://netpro-finalexam.onrender.com/ws");
+
         const myId = crypto.randomUUID();
         let username = "";
 
@@ -63,6 +64,14 @@
                 messageList.scrollTop = messageList.scrollHeight;
         }
 
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+
+            if(msg.type === 'chat') {
+                addMessage(msg.id, msg.username, msg.text);
+            }
+        };
+
         //オーバーレイの更新
         function updateStatus(text) {
             status.textContent = text;
@@ -79,20 +88,20 @@
             li.textContent = task;
             tasklist.appendChild(li);
         }
-        // ws.onmessage = (event) => {
-        //     const msg = JSON.parse(event.data)
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data)
 
-        //     if (msg.type === 'chat') {
-        //         addMessage(msg.id, msg.username, msg.text);
-        //     }
-        // };
+            if (msg.type === 'chat') {
+                addMessage(msg.id, msg.username, msg.text);
+             }
+         };
 
         //メッセージ送信
         function sendMessage(text) {
             text = text.trim();
             if(text === "") return;
 
-            // ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
+            ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
 
             input.value = "";
             input.focus();

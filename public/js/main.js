@@ -69,6 +69,8 @@
 
             const data = JSON.parse(event.data);
 
+            console.log("受信:", data);
+
             //役割
             if(data.type === "assigned-role"){
                 myRole = data.role;

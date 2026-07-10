@@ -51,8 +51,8 @@ body::before {
     box-sizing: border-box;
     margin: 20px 0;
     padding: 12px;
-    background: #9a99ab;
-
+    background: #5c5b6b;
+    color: white;
     border: none;
     border-radius: 8px;
 }

@@ -38,7 +38,7 @@ body::before {
     -webkit-backdrop-filter: blur(8px);
 
     border-radius: 12px;
-    color: black;
+    color: white;
     text-align: center;
 }
 
@@ -61,7 +61,7 @@ body::before {
     width: 100%;
     padding: 12px;
 
-    background-color: #9a99ab;
+    background-color: #838292;
 
     border: none;
     border-radius: 8px;
@@ -163,7 +163,7 @@ body::before {
 
 .form {
     display: flex;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #262936;
     flex-shrink: 0;
 }
 
@@ -171,15 +171,17 @@ body::before {
     flex: 1;
     height: 200px;
     padding: 10px;
-    border: 1px solid #9a99ab;
+    border: 1px solid #262936;
     box-sizing: border-box;
-    background-color: #9a99ab;
+    background-color: #404756;
+    color: white;
 }
 
 .submit {
     padding: 10px;
-    border: 1px solid #8c92a9;
-    background: #8c92a9;
+    border: 1px solid #262926;
+    background: #5c5b6b;
+    color: #ddd;
     cursor: pointer;
 }
 
@@ -211,4 +213,9 @@ body::before {
 
 .choice:hover{
     background: #384555;
+}
+
+input:focus {
+    outline: none;
+    border: 1px solid #262926;
 }

@@ -12,7 +12,7 @@ body::before {
     position: fixed;
     inset: 0;
 
-    background: rgba(59, 67, 85, 0.7);
+    background: rgba(0,0,0,0.6);
 
     z-index: -1;
 }
@@ -86,13 +86,50 @@ body::before {
     display: none;
 }
 
+.toggle-btn {
+    position: fixed;
+    right: 340px;
+    top: 20px;
+
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #404756;
+    color: white;
+
+    font-size: 20px;
+    cursor: pointer;
+
+    z-index: 100;
+    transition: 0.3s;
+}
+
+.toggle-btn.closed {
+    right: 20px;
+}
+
 .overlay {
     width: 320px;
     background: rgba(47, 53, 66, 0.7);
-    color: white;
+    color: rgb(178, 178, 197);
     padding: 15px;
     overflow-y: auto;
     border-left: 3px solid #444;
+
+    transition: all 0.3s ease;
+}
+
+.overlay.hidden {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    opacity: 0;
+    transform: translateX(100%);
+    overflow: hidden;
+    border: none;
 }
 
 .panel {

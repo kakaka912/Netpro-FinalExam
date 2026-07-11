@@ -29,11 +29,21 @@
         const form = document.querySelector('.form');
         const input = document.querySelector('.input');
 
+        const toggleOverlay = document.getElementById("toggleOverlay");
+        const overlay = document.getElementById("overlay");
+
+        toggleOverlay.onclick = () => {
+            overlay.classList.toggle("hidden");
+            toggleOverlay.classList.toggle("closed");
+        }
+
         //ゲーム情報の要素の取得
         const userinfo = document.getElementById("userinfo");
         const status = document.getElementById("status");
         const infolist = document.getElementById("itemList");
         const tasklist = document.getElementById("taskList");
+
+
 
         //メッセージを画面に追加
         function addMessage(id, username, text) {

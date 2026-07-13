@@ -184,7 +184,7 @@ app.ws('/ws', (ws, req) => {
                 type: 'chat',
                 id: ws.clientId,
                 username: ws.username,
-                text = data.text
+                text: data.text
             })
             console.log(`プレイヤーチャットを受信: ${data.role}: ${text}`);
         }

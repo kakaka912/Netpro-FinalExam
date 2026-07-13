@@ -168,11 +168,12 @@ app.ws('/ws', (ws, req) => {
         if (data.type === 'chat') {
             const sendData = {
                 type: 'chat',
-                id: ws.clientId,
+                id: data.id,
                 username: data.username || ws.username || '名無し',
                 text: data.text || ''
             };
-            console.log(`プレイヤーチャットを受信: ${data.role}: ${data.text}`);
+            broadcast(sendData);
+            console.log(`プレイヤーチャットを受信: ${data.role || '不明'}: ${data.text}`);
         }
 
         // 4. 選択肢ボタンが押された時

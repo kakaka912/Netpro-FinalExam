@@ -1,8 +1,6 @@
 const express = require('express');
 const expressWs = require('express-ws');
 
-const myId = crypto.randomUUID();
-
 const app = express();
 expressWs(app);
 
@@ -177,7 +175,7 @@ app.ws('/ws', (ws, req) => {
                 ws.clientId = data.id;
                 ws.username = data.username;
             }
-            
+
         const data = JSON.parse(raw.toString());
 
         // 1. 画面をクリックして次のセリフを要求された時

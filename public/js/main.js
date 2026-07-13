@@ -1,5 +1,6 @@
     const ws = new WebSocket("wss://netpro-finalexam.onrender.com/ws");
-
+    const myId = crypto.randomUUID();
+    
         let username = "";
         let myRole = "";
 

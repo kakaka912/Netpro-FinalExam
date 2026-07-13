@@ -11,6 +11,7 @@
 
         const chatScreen = document.querySelector(".container");
 
+        //(K)
         // loginButton.onclick = () => {
         //    const name = usernameInput.value.trim();
 
@@ -21,10 +22,14 @@
 
         //    username = name;
 
+        //    loginScreen.style.display = "none";
+        //    chatScreen.style.display = "flex";
+        //    input.focus();
+        // }
+        window.onload = () => {
             loginScreen.style.display = "none";
             chatScreen.style.display = "flex";
-            input.focus();
-        // }
+        };
 
         const messageList = document.querySelector(".messages");
         const form = document.querySelector('.form');

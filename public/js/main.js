@@ -1,6 +1,6 @@
     const ws = new WebSocket("wss://netpro-finalexam.onrender.com/ws");
     const myId = crypto.randomUUID();
-    
+
         let username = "";
         let myRole = "";
 
@@ -44,6 +44,10 @@
         const tasklist = document.getElementById("taskList");
 
 
+        // ゲームシナリオ表示（K）
+        function showMessage(speaker, text){
+            addMessage("system-id", speaker, text);
+        }
 
         //メッセージを画面に追加
         function addMessage(id, username, text) {
@@ -147,7 +151,7 @@
         function addItem(item) {
             const li = document.createElement("li");
             li.textContent = item;
-            DataTransferItemList.appendChild(li);
+            infolist.appendChild(li);
         }
 
         function addTask(task) {
@@ -161,7 +165,7 @@
             text = text.trim();
             if(text === "") return;
 
-            ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
+            ws.send(JSON.stringify({ id: myId, username: username, text: text, type: "chat" }));
 
             input.value = "";
             input.focus();
@@ -177,7 +181,13 @@
         //     console.error('WebSocket Error: ', error)
         // }
         
-        // ws.onopen = () => {
-        //     console.log("WebSocket Connected");
-        // };
+    
+    //クライアント接続時
+    ws.onopen = () => {
+        ws.send(JSON.stringify({
+            type: "register",
+            id: myId,
+        }));
+    };
+
         

@@ -158,18 +158,6 @@ app.ws('/ws', (ws, req) => {
     ws.on('message', (raw) => {
         try{
             const data = JSON.parse(raw.toString());
-            if(data.type === 'chat'){
-                const sendData = {
-                    type:'chat',
-                    username: data.username || '名無し',
-                    text: data.text || '',
-                    id: ws.clientId
-                };
-                broadcast(sendData);
-                }
-            } catch (e) {
-                console.error('データの解析に失敗しました', e);
-            }
 
         // 1. 画面をクリックして次のセリフを要求された時
         if (data.type === 'request-next-line') {
@@ -178,13 +166,13 @@ app.ws('/ws', (ws, req) => {
 
         // 2. プレイヤー同士のチャット（テキストをそのままブロードキャスト）
         if (data.type === 'chat') {
-            broadcast({
+            const sendData = {
                 type: 'chat',
                 id: ws.clientId,
-                username: ws.username,
-                text: data.text
-            })
-            console.log(`プレイヤーチャットを受信: ${data.role}: ${text}`);
+                username: data.username || ws.username || '名無し',
+                text: data.text || ''
+            };
+            console.log(`プレイヤーチャットを受信: ${data.role}: ${data.text}`);
         }
 
         // 4. 選択肢ボタンが押された時
@@ -209,16 +197,10 @@ app.ws('/ws', (ws, req) => {
                 }
             }
         }
+    }catch(e){
+        console.error('データの解析または処理に失敗しました', e)
+        }
     });
-
-    //クライアント接続時
-    ws.onopen = () => {
-        ws.send(JSON.stringify({
-            type: "register",
-            id: myId,
-            username: username
-        }));
-    };
 
     // 接続が切れたとき
     ws.on('close', () => {

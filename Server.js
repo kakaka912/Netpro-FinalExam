@@ -27,6 +27,7 @@ function getTodayString() {
 const todayText = getTodayString();
 
 const scenarioD_WakeUp = [
+    { speaker: "System", text: "※チャットは通信相手に見えません" },
     { speaker: "System", text: "【Cランク地区9-505棟】" },
     { speaker: "Ai Min", text: "起床時刻です。" },
     { speaker: "Ai Min", text: `ただいま ${todayText} 8 時 00 分。本日の最高気温は 38 ℃ 最低気温は 29 ℃。` },
@@ -71,6 +72,7 @@ const scenarioD_CallStart = [
 ];
 
 const scenarioP_WakeUp = [
+    { speaker: "System", text: "※チャットは通信相手には見えません" },
     { speaker: "System", text: "【Bランク地区-avocadoビルディング】" },
     { speaker: "Ai Min", text: "おはようございます！ 本日も素晴らしい朝がやってきました。" },
     { speaker: "Ai Min", text: `ただいま ${todayText} 8 時 00 分です。最高気温は 38℃ 最低気温は 29℃の予報です。` },
@@ -148,12 +150,12 @@ app.ws('/ws', (ws, req) => {
     if (playerCount === 1) {
         ws.role = 'D-2519';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'D-2519'}));
-        ws.send(JSON.stringify({ type: 'taggle-chat', mode: 'local'}));
+        ws.send(JSON.stringify({ type: 'toggle-chat', mode: 'local'}));
         console.log('一人目のプレイヤーにD-2519を割り当て');
     } else if (playerCount === 2) {
         ws.role = 'P-0901';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901'}));
-                ws.send(JSON.stringify({ type: 'taggle-chat', mode: 'local'}));
+                ws.send(JSON.stringify({ type: 'toggle-chat', mode: 'local'}));
         console.log('二人目のプレイヤーにP-0901を割り当て ゲームを開始');
 
         startGame();

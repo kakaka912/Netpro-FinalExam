@@ -3,6 +3,7 @@
 
         let username = "";
         let myRole = "";
+        let chatMode = "local" //(K)
 
         const loginScreen = document.getElementById("loginScreen");
         const usernameInput = document. getElementById("usernameInput");
@@ -82,6 +83,11 @@
         ws.onmessage = (event)=>{
 
             const data = JSON.parse(event.data);
+
+            // チャット開放（K)
+            if(data.type === "toggle-chat"){
+                    chatMode = data.mode; 
+            }
 
             console.log("受信:", JSON.stringify(data, null, 2));
 
@@ -165,10 +171,21 @@
             text = text.trim();
             if(text === "") return;
 
+            // 自分だけに見えるチャット（K)
+            if(chatMode === "local"){
+                addMessage(myId, username, text);
+                input.value = "";
+                return;
+            }
+
+            // 相手にも送るチャット（K)
+            if(chatMode === "global"){
+                // 以下、既存の処理
             ws.send(JSON.stringify({ id: myId, username: username, text: text, type: "chat" }));
 
             input.value = "";
             input.focus();
+            }
         }
 
         //フォーム送信

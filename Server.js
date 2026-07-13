@@ -7,6 +7,7 @@ expressWs(app);
 const port = process.env.PORT || 3000;
 let connects = []; // 接続されているWebSocketのリスト
 let playerCount = 0; // 接続人数
+let chatEnabled = false; //チャット有効フラグ（初期設定：無効）
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -147,11 +148,15 @@ app.ws('/ws', (ws, req) => {
     if (playerCount === 1) {
         ws.role = 'D-2519';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'D-2519'}));
+        ws.send(JSON.stringify({ type: 'taggle-chat', mode: 'local'}));
         console.log('一人目のプレイヤーにD-2519を割り当て');
     } else if (playerCount === 2) {
         ws.role = 'P-0901';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901'}));
+                ws.send(JSON.stringify({ type: 'taggle-chat', mode: 'local'}));
         console.log('二人目のプレイヤーにP-0901を割り当て ゲームを開始');
+
+        startGame();
     }
 
     // クライアントからメッセージを受け取った時の処理
@@ -166,6 +171,17 @@ app.ws('/ws', (ws, req) => {
 
         // 2. プレイヤー同士のチャット（テキストをそのままブロードキャスト）
         if (data.type === 'chat') {
+
+            if(!chatEnabled) {
+                ws.send(JSON.stringify({
+                    type: "chat",
+                    id: data.id,
+                    username: data.username,
+                    text: data.text,
+                    local: true
+                }));
+                return;
+            }
             const sendData = {
                 type: 'chat',
                 id: data.id,
@@ -247,6 +263,8 @@ function startGame() {
 
 // チャット開放
 function connectCall() {
+    chatEnabled = true;
+
     activeScenarioD = scenario_Connected;
     activeScenarioP = scenario_Connected;
     currentLineD = 0;
@@ -255,7 +273,7 @@ function connectCall() {
     sendToRole('D-2519', { type: 'next-line', data: activeScenarioD[currentLineD] });
     sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
 
-    broadcast({ type: 'toggle-chat', enabled: true }); 
+    broadcast({ type: 'toggle-chat', mode: "global"}); 
 }
 
 // シナリオ読み込み

@@ -171,8 +171,6 @@ app.ws('/ws', (ws, req) => {
                 console.error('データの解析に失敗しました', e);
             }
 
-        const data = JSON.parse(raw.toString());
-
         // 1. 画面をクリックして次のセリフを要求された時
         if (data.type === 'request-next-line') {
             handleNextLine(data.role);

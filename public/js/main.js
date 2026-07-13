@@ -199,7 +199,7 @@
         // }
         
     
-    //クライアント接続時
+    //クライアント接続時（K)
     ws.onopen = () => {
         ws.send(JSON.stringify({
             type: "register",

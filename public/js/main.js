@@ -56,6 +56,8 @@
         }
         // クリックで進める（K)
         document.addEventListener("click", () => {
+        // 選択肢ボタンでは進めない
+        if(e.target.classList.contains("choice")) return;    
 
         // 選択肢が出ている時は進めない
         const choicesArea = document.getElementById("choices");

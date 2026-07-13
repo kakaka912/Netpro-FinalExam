@@ -55,7 +55,8 @@
             addMessage("system-id", speaker, text);
         }
         // クリックで進める（K)
-        document.addEventListener("click", () => {
+        document.addEventListener("click", (e) => {
+
         // 選択肢ボタンでは進めない
         if(e.target.classList.contains("choice")) return;    
 

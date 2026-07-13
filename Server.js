@@ -27,6 +27,7 @@ function getTodayString() {
 const todayText = getTodayString();
 
 const scenarioD_WakeUp = [
+    { speaker: "System", text: "" },
     { speaker: "System", text: "※チャットは通信相手に見えません" },
     { speaker: "System", text: "【Cランク地区9-505棟】" },
     { speaker: "Ai Min", text: "起床時刻です。" },
@@ -72,6 +73,7 @@ const scenarioD_CallStart = [
 ];
 
 const scenarioP_WakeUp = [
+    { speaker: "System", text: "" },
     { speaker: "System", text: "※チャットは通信相手に見えません" },
     { speaker: "System", text: "【Bランク地区-avocadoビルディング】" },
     { speaker: "Ai Min", text: "おはようございます！ 本日も素晴らしい朝がやってきました。" },

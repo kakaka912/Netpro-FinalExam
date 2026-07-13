@@ -1,6 +1,8 @@
 const express = require('express');
 const expressWs = require('express-ws');
 
+const myId = crypto.randomUUID();
+
 const app = express();
 expressWs(app);
 
@@ -26,7 +28,7 @@ function getTodayString() {
 const todayText = getTodayString();
 
 const scenarioD_WakeUp = [
-    { speaker: "システム", text: "【Cランク地区9-505棟】" },
+    { speaker: "System", text: "【Cランク地区9-505棟】" },
     { speaker: "Ai Min", text: "起床時刻です。" },
     { speaker: "Ai Min", text: `ただいま ${todayText} 8 時 00 分。本日の最高気温は 38 ℃ 最低気温は 29 ℃。` },
     { speaker: "Ai Min", text: "D-2519 特別予定 2件"},
@@ -55,7 +57,7 @@ const scenarioD_report = [
 
 const scenarioD_Work = [
     { speaker: "Ai Min", text: "幸せな日々の為に。" },
-    { speaker: "システム", text: "【仕事場】" },
+    { speaker: "System", text: "【仕事場】" },
     { speaker: "Computer", type: "typing"}
 ];
 
@@ -70,7 +72,7 @@ const scenarioD_CallStart = [
 ];
 
 const scenarioP_WakeUp = [
-    { speaker: "システム", text: "【Bランク地区-avocadoビルディング】" },
+    { speaker: "System", text: "【Bランク地区-avocadoビルディング】" },
     { speaker: "Ai Min", text: "おはようございます！ 本日も素晴らしい朝がやってきました。" },
     { speaker: "Ai Min", text: `ただいま ${todayText} 8 時 00 分です。最高気温は 38℃ 最低気温は 29℃の予報です。` },
     { speaker: "Ai Min", text: "P-0901様に 特別な連絡が 2 件ございます。" },
@@ -83,7 +85,7 @@ const scenarioP_WakeUp = [
 
 const scenarioP_Work = [
     { speaker: "Ai Min", text: "幸せな日々の為に。" },
-    { speaker: "システム", text: "【仕事場】" },
+    { speaker: "System", text: "【仕事場】" },
     { speaker: "Ai Wo", text: "コールがかかるまでお待ちください" },
     { speaker: "Ai Wo", text: "コール受信" },
     { speaker: "Ai Wo", text: "簡易処理のためAIによるサポートが実施されます。" },
@@ -92,7 +94,7 @@ const scenarioP_Work = [
 ];
 
 const scenarioP_manualTutorial = [
-    { speaker: "マニュアル", type: "img"},
+    { speaker: "Manual", type: "img"},
     { speaker: "P-0901", type: "choice", choices:["システムを再起動してください"]}
 ];
 
@@ -108,17 +110,17 @@ const scenarioP_called = [
 
 const scenario_Connected = [
     { speaker: "Ai Wo", text: "コール相手との通信を開始しました。" },
-    { speaker: "システム", text: "ここからは任意操作となります。" }
+    { speaker: "System", text: "ここからは任意操作となります。" }
 ];
 
 const scenarioD_CallNotice = [
     { speaker: "Ai Wo", text: "サポートセンターからの指示をお待ちください。適切でない操作をすると仕事評価の著しい低下または失職の可能性があります。" },
-    { speaker: "システム", text: "[※送信したメッセージと〇色のテキストは通信相手にも表示されます]" }
+    { speaker: "System", text: "[※送信したメッセージと〇色のテキストは通信相手にも表示されます]" }
 ];
 
 const scenarioP_CallNotice = [
     { speaker: "Ai Wo", text: "エラーナンバーは4-0-2-9です。適切な対処をお願い致します。" },
-    { speaker: "システム", text: "[※送信したメッセージと〇色のテキストは通信相手にも表示されます]" },
+    { speaker: "System", text: "[※送信したメッセージと〇色のテキストは通信相手にも表示されます]" },
     { speaker: "P-0901", type: "choice", choices: ["マニュアルを開く[4-0-2-9]"] }
 ];
 
@@ -146,11 +148,11 @@ app.ws('/ws', (ws, req) => {
     // 接続した順番で役割（Role）を割り振って本人に通知
     if (playerCount === 1) {
         ws.role = 'D-2519';
-        ws.send(JSON.stringify({ type: 'assigned-role', role: 'D-2519' }));
+        ws.send(JSON.stringify({ type: 'assigned-role', role: 'D-2519', id: myId, username: username}));
         console.log('一人目のプレイヤーにD-2519を割り当て');
     } else if (playerCount === 2) {
         ws.role = 'P-0901';
-        ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901' }));
+        ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901', id: myId, id: myId, username: username}));
         console.log('二人目のプレイヤーにP-0901を割り当て ゲームを開始');
     }
 
@@ -162,13 +164,20 @@ app.ws('/ws', (ws, req) => {
                 const sendData = {
                     type:'chat',
                     username: data.username || '名無し',
-                    text: data.text || ''
+                    text: data.text || '',
+                    id: ws.clientId
                 };
                 broadcast(sendData);
                 }
             } catch (e) {
                 console.error('データの解析に失敗しました', e);
             }
+
+            if(data.type === 'assigned-role'){
+                ws.clientId = data.id;
+                ws.username = data.username;
+            }
+            
         const data = JSON.parse(raw.toString());
 
         // 1. 画面をクリックして次のセリフを要求された時
@@ -186,17 +195,6 @@ app.ws('/ws', (ws, req) => {
             };
             broadcast(sendData);
             console.log(`プレイヤーチャットを受信: ${data.role}: ${text}`);
-        }
-
-        // 3. スタンプ送信
-        if (data.type === 'stamp') {
-            const sendData = {
-                type: 'stamp',
-                x: data.x,
-                y: data.y
-            };
-            broadcast(sendData);
-            return;
         }
 
         // 4. 選択肢ボタンが押された時

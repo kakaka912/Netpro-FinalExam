@@ -12,14 +12,14 @@
         const chatScreen = document.querySelector(".container");
 
         loginButton.onclick = () => {
-            const name = usernameInput.value.trim();
+        //    const name = usernameInput.value.trim();
 
-            if(name === "") {
-                alert("ユーザー名を入力してください");
-                return;
-            }
+        //    if(name === "") {
+        //        alert("ユーザー名を入力してください");
+        //        return;
+        //    }
 
-            username = name;
+        //    username = name;
 
             loginScreen.style.display = "none";
             chatScreen.style.display = "flex";
@@ -107,7 +107,8 @@
             //役割
             if(data.type === "assigned-role"){
                 myRole = data.role;
-                console.log("役割:", myRole);
+                // console.log("役割:", myRole);
+                username = data.role; // username = role名（K)
             }
 
             //シナリオ

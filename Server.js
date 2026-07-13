@@ -72,7 +72,7 @@ const scenarioD_CallStart = [
 ];
 
 const scenarioP_WakeUp = [
-    { speaker: "System", text: "※チャットは通信相手には見えません" },
+    { speaker: "System", text: "※チャットは通信相手に見えません" },
     { speaker: "System", text: "【Bランク地区-avocadoビルディング】" },
     { speaker: "Ai Min", text: "おはようございます！ 本日も素晴らしい朝がやってきました。" },
     { speaker: "Ai Min", text: `ただいま ${todayText} 8 時 00 分です。最高気温は 38℃ 最低気温は 29℃の予報です。` },

@@ -49,6 +49,19 @@
         function showMessage(speaker, text){
             addMessage("system-id", speaker, text);
         }
+        // クリックで進める（K)
+        document.addEventListener("click", () => {
+
+        // 選択肢が出ている時は進めない
+        const choicesArea = document.getElementById("choices");
+        if (choicesArea.children.length > 0) return;
+
+        ws.send(JSON.stringify({
+            type: "request-next-line",
+            role: myRole
+        }));
+    });
+
 
         //メッセージを画面に追加
         function addMessage(id, username, text) {

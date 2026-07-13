@@ -146,11 +146,11 @@ app.ws('/ws', (ws, req) => {
     // 接続した順番で役割（Role）を割り振って本人に通知
     if (playerCount === 1) {
         ws.role = 'D-2519';
-        ws.send(JSON.stringify({ type: 'assigned-role', role: 'D-2519', id: myId, username: username}));
+        ws.send(JSON.stringify({ type: 'assigned-role', role: 'D-2519'}));
         console.log('一人目のプレイヤーにD-2519を割り当て');
     } else if (playerCount === 2) {
         ws.role = 'P-0901';
-        ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901', id: myId, id: myId, username: username}));
+        ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901'}));
         console.log('二人目のプレイヤーにP-0901を割り当て ゲームを開始');
     }
 
@@ -171,11 +171,6 @@ app.ws('/ws', (ws, req) => {
                 console.error('データの解析に失敗しました', e);
             }
 
-            if(data.type === 'assigned-role'){
-                ws.clientId = data.id;
-                ws.username = data.username;
-            }
-
         const data = JSON.parse(raw.toString());
 
         // 1. 画面をクリックして次のセリフを要求された時
@@ -185,13 +180,12 @@ app.ws('/ws', (ws, req) => {
 
         // 2. プレイヤー同士のチャット（テキストをそのままブロードキャスト）
         if (data.type === 'chat') {
-            const text = data.text || "";
-
-            const sendData = {
-                type: 'broadcast-message',
-                text: `${data.role}: ${text}`
-            };
-            broadcast(sendData);
+            broadcast({
+                type: 'chat',
+                id: ws.clientId,
+                username: ws.username,
+                text = data.text
+            })
             console.log(`プレイヤーチャットを受信: ${data.role}: ${text}`);
         }
 
@@ -218,6 +212,15 @@ app.ws('/ws', (ws, req) => {
             }
         }
     });
+
+    //クライアント接続時
+    ws.onopen = () => {
+        ws.send(JSON.stringify({
+            type: "register",
+            id: myId,
+            username: username
+        }));
+    };
 
     // 接続が切れたとき
     ws.on('close', () => {

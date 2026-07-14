@@ -113,37 +113,76 @@ body::before {
 }
 
 .overlay {
-    width: 320px;
+    flex: 0 0 320px;
     background: rgba(47, 53, 66, 0.7);
     color: white;
     padding: 15px;
-    overflow-y: auto;
-    border-left: 3px solid #444;
+    overflow: hidden;
+    opacity: 1;
 
-    transition: all 0.3s ease;
+    transition: flex-basis 0.3s ease, opacity 0.2s ease;
 }
 
 .overlay.hidden {
-    width: 0;
+    flex-basis: 0;
     padding-left: 0;
     padding-right: 0;
     opacity: 0;
-    transform: translateX(100%);
-    overflow: hidden;
-    border: none;
+    border-left: none;
 }
 
-.panel {
-    margin-bottom: 20px;
+.overlay-content {
+    transition: opacity 0.2s ease;
+}
+
+.overlay.hidden .overlay-content {
+    opacity: 0;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    flex: 1;
     padding: 10px;
-    background: #404756;
-    border-radius: 8px;
+    border: none;
+    background: #262936;
+    color: white;
+
+    cursor: pointer;
 }
 
-.panel h3 {
-    margin-top: 0;
+.tab-btn.active {
+    background: #404756;
+}
+
+.tab-panel.hidden {
+    display: none;
+}
+
+#memo {
+    width: 100%;
+    height: 180px;
+    box-sizing: border-box;
+    resize: vertical;
+    background: #404756;
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
 }
             
+#memoCanvas {
+    width: 100%;
+    height: 300px;
+    background: #909ab1;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 8px;
+    cursor: crosshair;
+}
+
 .messages {
     flex: 1 1 0;
     min-height: 0;
@@ -156,6 +195,7 @@ body::before {
     list-style: none;
     padding: 10px;
     padding-right: 80px;
+    padding-bottom: 30px;
     margin: 0;
 }
 
@@ -193,11 +233,11 @@ body::before {
 }
 
 .message.my .bubble {
-    background: #363c43;
+    background: #3a4556;
 }
 
 .message.other .bubble {
-    background: #234555;
+    background: #245869;
 }
 
 .form {

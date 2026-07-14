@@ -36,47 +36,55 @@
             </form>
         </div>
 
-        <!--ゲーム内情報-->
+        <!--オーバーレイ-->
         <button id="toggleOverlay" class="toggle-btn">
-                <i class="bi bi-layout-sidebar-reverse"></i>
+            <i class="bi bi-layout-sidebar-reverse"></i>
         </button>
         
         <aside class="overlay hidden" id="overlay">
+            <div class="overlay-content">
             
-            <h2>ゲーム情報</h2>
+                <!-- タブ -->
+                <div class="tabs">
+                    <button class="tab-btn active" id="memoTab">メモ</button>
+                    <button class="tab-btn" id="settingTab">設定</button>
+                </div>
 
-            <div class="panel">
-                <h3>ユーザー情報</h3>
-                <ul id="userinfo">
-                    <li>名前: ディス</li>
-                    <li>Cランクの人間</li>
-                    <li>勤務先: 総合指示施設</li>
-                    <li>仕事内容: 画面上に指示されたボタンを押す</li>
-                    <li>移動制限: 職場と自宅以外の移動には申請が必要</li>
-                </ul>
-            </div>
+                <!-- メモ画面 -->
+                <div id="memoPanel" class="tab-panel">
+                    <div class="panel">
+                        <h3>テキストメモ</h3>
 
-            <div class="panel">
-                <h3>現在の状況</h3>
-                <p id="status">
-                    あなたは優秀な闇市の人を探しています。
-                </p>
-            </div>
+                        <textarea id="memo" placeholder="テキストメモ"></textarea>
+                    </div>
 
-            <div class="panel">
-                <h3>持っている情報</h3>
-                <ul id="itemList">
-                    <li>「ピアがアンドロイド」</li>
-                    <li>アンドロイドは処分対象である</li>
-                </ul>
-            </div>
+                    <div class="panel">
+                        <h3>手書きメモ</h3>
+                        <canvas id="memoCanvas"></canvas>
+                    </div>
+                </div>
 
-            <div class="panel">
-                <h3>現在のタスク</h3>
-                <ul id="taskList">
-                    <li>街を出る方法を探す</li>
-                    <li>偽造申請許可証を闇市で手に入れる</li>
-                </ul>
+                <!-- 設定画面 -->
+                <div id="settingPanel" class="tab-panel hidden">
+                    <div class="panel">
+                        <h3>文字サイズ</h3>
+                        <select id="fontSize">
+                            <option value="small">小</option>
+                            <option value="medium" selected>標準</option>
+                            <option value="large">大</option>
+                        </select>
+                    </div>
+                    <div class="panel">
+                        <h3>色覚補正モード</h3>
+                        <select id="colorMode">
+                            <option value="off">OFF</option>
+                            <option value="protanopia">Protanopia</option>
+                            <option value="deuteranopia">Deuteranopia</option>
+                            <option value="tritanopia">Tritanopia</option>
+                        </select>
+                    </div>
+                </div>
+            
             </div>
         </aside>
     </div>

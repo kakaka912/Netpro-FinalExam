@@ -27,7 +27,7 @@
         //    input.focus();
         // }
         window.onload = () => {
-            loginScreen.style.display = "none";
+            // loginScreen.style.display = "none";
             chatScreen.style.display = "flex";
         };
 
@@ -41,6 +41,10 @@
         toggleOverlay.onclick = () => {
             overlay.classList.toggle("hidden");
             toggleOverlay.classList.toggle("closed");
+
+            if (!overlay.classList.contains("hidden")) {
+                resizeCanvas();
+            }
         }
 
         //ゲーム情報の要素の取得
@@ -162,6 +166,8 @@
                 };
                 area.appendChild(button);
             });
+            //選択肢表示後にスクロール
+            messageList.scrollTop = messageList.scrollHeight;
         }
 
         //選択肢を閉じる
@@ -229,4 +235,76 @@
         }));
     };
 
+    //オーバーレイの内容
+    const settingTab = document.getElementById("settingTab");
+    const memoTab = document.getElementById("memoTab");
+
+    const settingPanel = document.getElementById("settingPanel");
+    const memoPanel = document.getElementById("memoPanel");
+
+    settingTab.onclick = () => {
+        settingTab.classList.add("active");
+        memoTab.classList.remove("active");
+
+        settingPanel.classList.remove("hidden");
+        memoPanel.classList.add("hidden");
+    };
+
+    memoTab.onclick = () => {
+        memoTab.classList.add("active");
+        settingTab.classList.remove("active");
+
+        memoPanel.classList.remove("hidden");
+        settingPanel.classList.add("hidden");
+    }
+
+    //メモキャンバス
+    const canvas = document.getElementById("memoCanvas");
+    const ctx = canvas.getContext("2d");
+    
+    //絵画サイズの調整
+    function resizeCanvas() {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        //線の設定
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "black";
+    }
+
+    window.addEventListener("load", resizeCanvas);
+
+    let drawing = false;
+
+    //マウスをクリック
+    canvas.addEventListener("mousedown", (e) => {
+        drawing = true;
+
+        const rect = canvas.getBoundingClientRect();
+
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    //マウスを動かす
+    canvas.addEventListener("mousemove", (e) => {
+
+        if (!drawing) return;
         
+        const rect = canvas.getBoundingClientRect();
+
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+    });
+
+    //マウスを離す
+    canvas.addEventListener("mouseup", () => {
+        drawing = false;
+    });
+
+    //キャンバス外
+    canvas.addEventListener("mouseleave", () => {
+        drawing = false;
+    });
+

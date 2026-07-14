@@ -1,8 +1,9 @@
     const ws = new WebSocket("wss://netpro-finalexam.onrender.com/ws");
+    const myId = crypto.randomUUID();
 
-        const myId = crypto.randomUUID();
         let username = "";
         let myRole = "";
+        let chatMode = "local" //(K)
 
         const loginScreen = document.getElementById("loginScreen");
         const usernameInput = document. getElementById("usernameInput");
@@ -10,20 +11,25 @@
 
         const chatScreen = document.querySelector(".container");
 
-        loginButton.onclick = () => {
-            const name = usernameInput.value.trim();
+        //(K)
+        // loginButton.onclick = () => {
+        //    const name = usernameInput.value.trim();
 
-            if(name === "") {
-                alert("ユーザー名を入力してください");
-                return;
-            }
+        //    if(name === "") {
+        //        alert("ユーザー名を入力してください");
+        //        return;
+        //    }
 
-            username = name;
+        //    username = name;
 
+        //    loginScreen.style.display = "none";
+        //    chatScreen.style.display = "flex";
+        //    input.focus();
+        // }
+        window.onload = () => {
             loginScreen.style.display = "none";
             chatScreen.style.display = "flex";
-            input.focus();
-        }
+        };
 
         const messageList = document.querySelector(".messages");
         const form = document.querySelector('.form');
@@ -43,6 +49,26 @@
         const infolist = document.getElementById("itemList");
         const tasklist = document.getElementById("taskList");
 
+
+        // ゲームシナリオ表示（K）
+        function showMessage(speaker, text){
+            addMessage("system-id", speaker, text);
+        }
+        // クリックで進める（K)
+        document.addEventListener("click", (e) => {
+
+        // 選択肢ボタンでは進めない
+        if(e.target.classList.contains("choice")) return;    
+
+        // 選択肢が出ている時は進めない
+        const choicesArea = document.getElementById("choices");
+        if (choicesArea.children.length > 0) return;
+
+        ws.send(JSON.stringify({
+            type: "request-next-line",
+            role: myRole
+        }));
+    });
 
 
         //メッセージを画面に追加
@@ -79,12 +105,18 @@
 
             const data = JSON.parse(event.data);
 
+            // チャット開放（K)
+            if(data.type === "toggle-chat"){
+                    chatMode = data.mode; 
+            }
+
             console.log("受信:", JSON.stringify(data, null, 2));
 
             //役割
             if(data.type === "assigned-role"){
                 myRole = data.role;
-                console.log("役割:", myRole);
+                // console.log("役割:", myRole);
+                username = data.role; // username = role名（K)
             }
 
             //シナリオ
@@ -147,7 +179,7 @@
         function addItem(item) {
             const li = document.createElement("li");
             li.textContent = item;
-            DataTransferItemList.appendChild(li);
+            infolist.appendChild(li);
         }
 
         function addTask(task) {
@@ -161,10 +193,21 @@
             text = text.trim();
             if(text === "") return;
 
-            ws.send(JSON.stringify({ id: myId, username, text, type: "chat" }));
+            // 自分だけに見えるチャット（K)
+            if(chatMode === "local"){
+                addMessage(myId, username, text);
+                input.value = "";
+                return;
+            }
+
+            // 相手にも送るチャット（K)
+            if(chatMode === "global"){
+                // 以下、既存の処理
+            ws.send(JSON.stringify({ id: myId, username: username, text: text, type: "chat" }));
 
             input.value = "";
             input.focus();
+            }
         }
 
         //フォーム送信
@@ -177,7 +220,13 @@
         //     console.error('WebSocket Error: ', error)
         // }
         
-        // ws.onopen = () => {
-        //     console.log("WebSocket Connected");
-        // };
+    
+    //クライアント接続時（K)
+    ws.onopen = () => {
+        ws.send(JSON.stringify({
+            type: "register",
+            id: myId,
+        }));
+    };
+
         

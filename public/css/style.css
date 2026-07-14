@@ -115,7 +115,7 @@ body::before {
 .overlay {
     width: 320px;
     background: rgba(47, 53, 66, 0.7);
-    color: rgb(178, 178, 197);
+    color: white;
     padding: 15px;
     overflow-y: auto;
     border-left: 3px solid #444;

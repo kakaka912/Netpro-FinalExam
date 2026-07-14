@@ -61,6 +61,8 @@
         // クリックで進める（K)
         document.addEventListener("click", (e) => {
 
+        //オーバーレイ内のクリックは影響しない
+        if(e.target.closest(".overlay")) return;
         // 選択肢ボタンでは進めない
         if(e.target.classList.contains("choice")) return;    
 

@@ -382,7 +382,7 @@ function handleNextLine(role) {
                     changeScenarioP(scenarioP_called);
                 }, 3000);
             } else if (activeScenarioP === scenarioP_called) {
-                connectCall();
+                changeScenarioP(scenario_Connected);
             } else if (activeScenarioP === scenario_Connected) {
                 changeScenarioP(scenarioP_CallNotice);
             } else if (activeScenarioP === scenarioP_CallNotice) {

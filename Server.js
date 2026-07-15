@@ -366,6 +366,8 @@ function handleNextLine(role) {
                 changeScenarioD(scenarioD_CallStart);
             } else if (avtiveScenarioD === scenarioD_CallStart) {
                 connectCall(); // 合流＆チャット解放
+            } else if (activeScenarioD === scenario_Connected) {
+                changeScenarioD(scenarioD_puzzleID);
             } else {
                 sendToRole('D-2519', { type: 'scenario-end' });
             }
@@ -384,6 +386,10 @@ function handleNextLine(role) {
                 connectCall();
             } else if (activeScenarioP === scenario_Connected) {
                 changeScenarioP(scenarioP_CallNotice);
+            } else if (activeScenarioP === scenarioP_CallNotice) {
+                changeScenarioP(scenarioP_CallNotice);
+            }  else if (activeScenarioD === scenario_Connected) {
+                changeScenarioD(scenarioD_puzzleID);
             } else {
                 sendToRole('P-0901', { type: 'scenario-end' });
             }

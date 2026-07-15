@@ -184,6 +184,9 @@
 
                 addMessage( data.id, data.username, data.text);
             }
+
+            hideChoices;
+            showMessage(line.speaker, line.text);
         };
 
         //選択肢表示関数

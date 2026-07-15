@@ -8,6 +8,8 @@ const port = process.env.PORT || 3000;
 let connects = []; // 接続されているWebSocketのリスト
 let playerCount = 0; // 接続人数
 let chatEnabled = false; //チャット有効フラグ（初期設定：無効）
+let typingCount = 0; // タイピングに成功した回数
+let pReachedWait = false; // Pが合流シナリオに到達 
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -194,6 +196,13 @@ app.ws('/ws', (ws, req) => {
             console.log(`プレイヤーチャットを受信: ${data.role || '不明'}: ${data.text}`);
         }
 
+        // 3. タイピング成功
+        if (data.type === "typing-success") {
+        typingCount++;
+        checkMergeCondition();
+        }
+
+
         // 4. 選択肢ボタンが押された時
         if (data.type === 'player-choice') {
             console.log(`${data.role}が選択: ${data.choice}`);
@@ -278,6 +287,13 @@ function connectCall() {
     broadcast({ type: 'toggle-chat', mode: "global"}); 
 }
 
+// 合流
+function checkMergeCondition() {
+    if (typingCount >= 3 && pReachedWait) {
+        connectCall(); // 合流＆チャット解放
+    }
+}
+
 // シナリオ読み込み
 function handleNextLine(role) {
     if (role === 'D-2519') {
@@ -298,7 +314,12 @@ function handleNextLine(role) {
         if (currentLineP < activeScenarioP.length) {
             sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
         } else {
-            if (activeScenarioP === scenarioP_CallStart) {
+            if(activeScenarioP === scenarioP_wait) {
+                setTimeout(() => {
+                    pReachedWait = true;
+                    checkMergeCondition();
+                }, 3000);
+            } else if (activeScenarioP === scenarioP_CallStart) {
                 connectCall();
             } else if (activeScenarioP === scenario_Connected) {
                 changeScenarioP(scenarioP_CallNotice);

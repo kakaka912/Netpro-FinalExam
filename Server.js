@@ -127,6 +127,32 @@ const scenarioP_CallNotice = [
     { speaker: "P-0901", type: "choice", choices: ["マニュアルを開く[4-0-2-9]"] }
 ];
 
+// 謎解きパート開始
+
+
+
+
+
+
+
+
+
+
+
+//謎解きパート終了
+
+const scenario_endhing = [
+    { speaker: "Ai Wo", text: "エラー対処完了。" },
+    { speaker: "Ai Wo", text: "素晴らしい働きです。" },
+    { speaker: "Ai Wo", text: "今回の報告書を作成中…" },
+    { speaker: "Ai Wo", text: "作成失敗。権限の失効を確認。" },
+    { speaker: "Ai Wo", text: "規定により責任者からのメッセージを公開します。" },
+    { speaker: "Cheese", text: "「α版はこれにて終了。テストの協力に感謝する」" },
+    { speaker: "System", type: "end" }
+];
+
+
+
 let currentLineD = 0;
 let currentLineP = 0;
 

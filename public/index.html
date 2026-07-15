@@ -60,6 +60,44 @@
 
                     <div class="panel">
                         <h3>手書きメモ</h3>
+                        <div class="memo-toolbar">
+
+                            <!-- 色 -->
+                            <div class="color-tools">
+                                <input type="color" id="penColor" value="#ffffff">
+                            </div>
+
+                            <!-- 太さ -->
+                            <div class="width-tools">
+                                <button class="width-btn" data-width="2">
+                                    <span class="dot small"></span>
+                                </button>
+
+                                <button class="width-btn active" data-width="5">
+                                    <span class="dot medium"></span>
+                                </button>
+                                
+                                <button class="width-btn" data-width="8">
+                                    <span class="dot large"></span>
+                                </button>
+                            </div>
+
+                            <!-- ペン -->
+                            <button id="penBtn">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+
+                            <!-- 消しゴム -->
+                            <button id="eraserBtn">
+                                <i class="bi bi-eraser-fill"></i>
+                            </button>
+
+                            <!-- クリア -->
+                            <button id="clearBtn">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </div>
+                        
                         <canvas id="memoCanvas"></canvas>
                     </div>
                 </div>
@@ -67,12 +105,22 @@
                 <!-- 設定画面 -->
                 <div id="settingPanel" class="tab-panel hidden">
                     <div class="panel">
-                        <h3>文字サイズ</h3>
+                        <label>文字サイズ</label>
                         <select id="fontSize">
-                            <option value="small">小</option>
-                            <option value="medium" selected>標準</option>
-                            <option value="large">大</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="14">14</option>
+                            <option value="16" selected>16</option>
+                            <option value="18">18</option>
+                            <option value="20">20</option>
+                            <option value="24">24</option>
+                            <option value="28">28</option>
+                            <option value="36">36</option>
                         </select>
+                            
                     </div>
                     <div class="panel">
                         <h3>色覚補正モード</h3>

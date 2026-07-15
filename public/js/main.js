@@ -43,7 +43,7 @@
             toggleOverlay.classList.toggle("closed");
 
             if (!overlay.classList.contains("hidden")) {
-                resizeCanvas();
+                setTimeout(resizeCanvas, 300);
             }
         }
 
@@ -58,23 +58,24 @@
         function showMessage(speaker, text){
             addMessage("system-id", speaker, text);
         }
+
+        const chat = document.querySelector(".chat");
+
         // クリックで進める（K)
-        document.addEventListener("click", (e) => {
+        chat.addEventListener("click", (e) => {
 
-        //オーバーレイ内のクリックは影響しない
-        if(e.target.closest(".overlay")) return;
-        // 選択肢ボタンでは進めない
-        if(e.target.classList.contains("choice")) return;    
+            // 選択肢ボタンでは進めない
+            if(e.target.classList.contains("choice")) return;    
 
-        // 選択肢が出ている時は進めない
-        const choicesArea = document.getElementById("choices");
-        if (choicesArea.children.length > 0) return;
+            // 選択肢が出ている時は進めない
+            const choicesArea = document.getElementById("choices");
+            if (choicesArea.children.length > 0) return;
 
-        ws.send(JSON.stringify({
+            ws.send(JSON.stringify({
             type: "request-next-line",
             role: myRole
-        }));
-    });
+            }));
+        });
 
     // 成功判定 (K)
     document.addEventListener("keydown", (e) => {
@@ -327,30 +328,48 @@
     //メモキャンバス
     const canvas = document.getElementById("memoCanvas");
     const ctx = canvas.getContext("2d");
+
+    //描画オプション
+    let currentWidth = 5;
+    let eraser = false;
+
+    const penBtn = document.getElementById("penBtn");
+    const eraserBtn = document.getElementById("eraserBtn");
+    const clearBtn = document.getElementById("clearBtn");
     
-    //絵画サイズの調整
     function resizeCanvas() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
 
-        //線の設定
-        ctx.lineWidth = 3;
+         //線の設定
+        ctx.lineWidth = currentWidth;
         ctx.lineCap = "round";
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = penColor.value;
     }
 
-    window.addEventListener("load", resizeCanvas);
+    window.addEventListener("load", () => {
+        resizeCanvas();
 
+        ctx.fillStyle = "909ab1";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    });
+    
     let drawing = false;
 
     //マウスをクリック
     canvas.addEventListener("mousedown", (e) => {
         drawing = true;
 
-        const rect = canvas.getBoundingClientRect();
+        ctx.lineWidth = currentWidth;
+
+        if (eraser) {
+            ctx.strokeStyle = "#909ab1";
+        } else {
+            ctx.strokeStyle = penColor.value;
+        }
 
         ctx.beginPath();
-        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.moveTo(e.offsetX, e.offsetY);
     });
 
     //マウスを動かす
@@ -358,9 +377,7 @@
 
         if (!drawing) return;
         
-        const rect = canvas.getBoundingClientRect();
-
-        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.lineTo(e.offsetX, e.offsetY);
         ctx.stroke();
     });
 
@@ -374,3 +391,50 @@
         drawing = false;
     });
 
+    
+
+    document.querySelectorAll(".width-btn").forEach(btn => {
+
+        btn.onclick = () => {
+            document.querySelector(".width-btn.active")?.classList.remove("active");
+            btn.classList.add("active");
+
+            currentWidth = Number(btn.dataset.width);
+        }
+    })
+
+    //消しゴム
+    penBtn.onclick = () => {
+        eraser = false;
+    }
+
+    eraserBtn.onclick = () => {
+        eraser = true;
+    }
+
+    clearBtn.onclick = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#909ab1";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    //設定(文字サイズ変更)
+    const fontSize = document.getElementById("fontSize");
+
+    fontSize.addEventListener("input", () => {
+        const size = parseInt(fontSize.value);
+        
+        if(!isNaN(size)) {
+            chat.style.fontSize = size + "px";
+        }
+    });
+
+    //設定(色覚補正モード)
+    const colorMode = document.getElementById("colorMode");
+
+    colorMode.onchange = () => {
+        chat.classList.remove("protanopia", "deuteranopia", "tritanopia");
+        if(colorMode.value !== "off") {
+            chat.classList.add(colorMode.value);
+        }
+};

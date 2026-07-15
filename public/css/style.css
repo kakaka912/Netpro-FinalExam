@@ -132,6 +132,7 @@ body::before {
 }
 
 .overlay-content {
+    padding-top: 60px;
     transition: opacity 0.2s ease;
 }
 
@@ -181,6 +182,91 @@ body::before {
     border: 1px solid #666;
     border-radius: 8px;
     cursor: crosshair;
+}
+
+.memo-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px 0;
+}
+
+.width-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background: #5c5b6b;
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+
+.memo-toolbar button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: #5c5b6b;
+    color: white;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.memo-toolbar button:hover {
+    background: #707080;
+}
+#penColor {
+    width: 40px;
+    height: 40px;
+    border: none;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.width-tools {
+    display: flex;
+    gap: 8px;
+}
+
+.width-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dot {
+    display: block;
+    background: white;
+    border-radius: 50%;
+}
+
+.small {
+    width: 4px;
+    height: 4px;
+}
+
+.medium {
+    width: 8px;
+    height: 8px;
+}
+
+.large {
+    width: 12px;
+    height: 12px;
+}
+
+.width-btn.active {
+    outline: 2px solid #7ea9ff;
 }
 
 .messages {
@@ -238,6 +324,30 @@ body::before {
 
 .message.other .bubble {
     background: #245869;
+}
+
+.chat.protanopia .message.my .bubble {
+    background: #2c5aa0;
+}
+
+.chat.protanopia .message.other .bubble {
+    background: #6a4c93;
+}
+
+.chat.deuteranopia .message.my .bubble {
+    background: #005f73;
+}
+
+.chat.deuteranopia .message.other .bubble {
+    background: #9b5de5;
+}
+
+.chat.tritanopia .message.my .bubble {
+    background: #5c677d;
+}
+
+.chat.tritanopia .message.other .bubble {
+    background: #ff9f1c;
 }
 
 .form {

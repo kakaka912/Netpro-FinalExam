@@ -141,12 +141,12 @@ const scenarioP_puzzleID = [
     { speaker: "Manual", type: "img", src: "P_2.png"}
 ];
 
-const scenarioD_puzzleID = [
+const scenarioD_puzzlePass = [
     { speaker: "Ai Wo", text: "パスワード を [] で囲いチャットに送信してください。" },
     { speaker: "Manual", type: "img", src: "D_1.png"}
 ];
 
-const scenarioP_puzzleID = [
+const scenarioP_puzzlePass = [
     { speaker: "Manual", type: "img", src: "P_1.png"}
 ];
 

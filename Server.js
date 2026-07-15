@@ -8,6 +8,8 @@ const port = process.env.PORT || 3000;
 let connects = []; // 接続されているWebSocketのリスト
 let playerCount = 0; // 接続人数
 let chatEnabled = false; //チャット有効フラグ（初期設定：無効）
+let typingCount = 0; // タイピングに成功した回数
+let pReachedWait = false; // Pが合流シナリオに到達 
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -125,6 +127,32 @@ const scenarioP_CallNotice = [
     { speaker: "P-0901", type: "choice", choices: ["マニュアルを開く[4-0-2-9]"] }
 ];
 
+// 謎解きパート開始
+
+
+
+
+
+
+
+
+
+
+
+//謎解きパート終了
+
+const scenario_endhing = [
+    { speaker: "Ai Wo", text: "エラー対処完了。" },
+    { speaker: "Ai Wo", text: "素晴らしい働きです。" },
+    { speaker: "Ai Wo", text: "今回の報告書を作成中…" },
+    { speaker: "Ai Wo", text: "作成失敗。権限の失効を確認。" },
+    { speaker: "Ai Wo", text: "規定により責任者からのメッセージを公開します。" },
+    { speaker: "Cheese", text: "「α版はこれにて終了。テストの協力に感謝する」" },
+    { speaker: "System", type: "end" }
+];
+
+
+
 let currentLineD = 0;
 let currentLineP = 0;
 
@@ -193,6 +221,13 @@ app.ws('/ws', (ws, req) => {
             broadcast(sendData);
             console.log(`プレイヤーチャットを受信: ${data.role || '不明'}: ${data.text}`);
         }
+
+        // 3. タイピング成功
+        if (data.type === "typing-success") {
+        typingCount++;
+        checkMergeCondition();
+        }
+
 
         // 4. 選択肢ボタンが押された時
         if (data.type === 'player-choice') {
@@ -278,6 +313,13 @@ function connectCall() {
     broadcast({ type: 'toggle-chat', mode: "global"}); 
 }
 
+// 合流
+function checkMergeCondition() {
+    if (typingCount >= 3 && pReachedWait) {
+        connectCall(); // 合流＆チャット解放
+    }
+}
+
 // シナリオ読み込み
 function handleNextLine(role) {
     if (role === 'D-2519') {
@@ -298,7 +340,12 @@ function handleNextLine(role) {
         if (currentLineP < activeScenarioP.length) {
             sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
         } else {
-            if (activeScenarioP === scenarioP_CallStart) {
+            if(activeScenarioP === scenarioP_wait) {
+                setTimeout(() => {
+                    pReachedWait = true;
+                    checkMergeCondition();
+                }, 3000);
+            } else if (activeScenarioP === scenarioP_CallStart) {
                 connectCall();
             } else if (activeScenarioP === scenario_Connected) {
                 changeScenarioP(scenarioP_CallNotice);

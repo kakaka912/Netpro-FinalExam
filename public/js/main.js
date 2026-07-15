@@ -79,6 +79,27 @@
             }));
         });
 
+    // 成功判定 (K)
+    document.addEventListener("keydown", (e) => {
+        if (!currentLetter) return;
+
+        const key = e.key.toUpperCase();
+
+        if (key === currentLetter) {
+            addMessage(myId, username, key);
+            typingCountLocal++;
+
+            ws.send(JSON.stringify({
+                type: "typing-success",
+                role: myRole
+        }));
+
+        // 次の文字へ
+        showNextLetter();
+    }
+});
+
+
 
         //メッセージを画面に追加
         function addMessage(id, username, text) {
@@ -144,6 +165,12 @@
                     hideChoices();
 
                     showMessage(line.speaker,line.text);
+                }
+
+                // D側タイピングゲーム開始 (K)
+                if(data.type === "typing") {
+                    startTypingGame();
+                    return;
                 }
             }
 
@@ -220,6 +247,19 @@
             input.focus();
             }
         }
+
+        // タイピングゲーム (K)
+        function startTypingGame() {
+        typingCountLocal = 0;
+        showNextLetter();
+        }
+
+        function showNextLetter() {
+        const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+        document.getElementById("typingArea").textContent = letter;
+        currentLetter = letter;
+        }
+
 
         //フォーム送信
         form.onsubmit = function (e) {

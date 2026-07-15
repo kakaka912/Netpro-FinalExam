@@ -1,6 +1,6 @@
 const express = require('express');
 const expressWs = require('express-ws');
-const pazzleID = "[A1412D3]"
+const puzzleID = "[A1412D3]"
 const puzzlePASS = "[2146]";
 let puzzleSolved = false;
 
@@ -121,12 +121,12 @@ const scenario_Connected = [
 
 const scenarioD_CallNotice = [
     { speaker: "Ai Wo", text: "サポートセンターからの指示をお待ちください。適切でない操作をすると仕事評価の著しい低下または失職の可能性があります。" },
-    { speaker: "System", text: "[※送信したメッセージと〇色のテキストは通信相手にも表示されます]" }
+    { speaker: "System", text: "[※ここから送信したメッセージは通信相手にも表示されます]" }
 ];
 
 const scenarioP_CallNotice = [
     { speaker: "Ai Wo", text: "エラーナンバーは4-0-2-9です。適切な対処をお願い致します。" },
-    { speaker: "System", text: "[※送信したメッセージと〇色のテキストは通信相手にも表示されます]" },
+    { speaker: "System", text: "[※ここから送信したメッセージと〇色のテキストは通信相手にも表示されます]" },
     { speaker: "P-0901", type: "choice", choices: ["マニュアルを開く[4-0-2-9]"] }
 ];
 
@@ -238,8 +238,8 @@ app.ws('/ws', (ws, req) => {
             if (data.text.trim() === puzzleID) {
                 sendToRole("D-2519", { type: "system-message", text: "ID 認証成功" });
 
-                changeScenarioD(scenarioD_pazzlePass);
-                changeScenarioP(scenarioP_pazzlePass);
+                changeScenarioD(scenarioD_puzzlePass);
+                changeScenarioP(scenarioP_puzzlePass);
             }
 
             if (data.text.trim() === puzzlePASS) {
@@ -347,7 +347,7 @@ function connectCall() {
 // 合流
 function checkMergeCondition() {
     if (typingCount >= 3 && pReachedWait) {
-        connectCall(); // 合流＆チャット解放
+        changeScenarioD(scenarioD_Trouble);
     }
 }
 
@@ -362,6 +362,10 @@ function handleNextLine(role) {
                 connectCall();
             } else if (activeScenarioD === scenario_Connected) {
                 changeScenarioD(scenarioD_CallNotice);
+            } else if (activeScenarioD === scenarioD_Trouble) {
+                changeScenarioD(scenarioD_CallStart);
+            } else if (avtiveScenarioD === scenarioD_CallStart) {
+                connectCall(); // 合流＆チャット解放
             } else {
                 sendToRole('D-2519', { type: 'scenario-end' });
             }
@@ -374,7 +378,7 @@ function handleNextLine(role) {
             if(activeScenarioP === scenarioP_wait) {
                 setTimeout(() => {
                     pReachedWait = true;
-                    checkMergeCondition();
+                    changeScenarioP(scenarioP_called);
                 }, 3000);
             } else if (activeScenarioP === scenarioP_CallStart) {
                 connectCall();

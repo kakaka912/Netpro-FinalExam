@@ -381,7 +381,7 @@ function handleNextLine(role) {
                     pReachedWait = true;
                     changeScenarioP(scenarioP_called);
                 }, 3000);
-            } else if (activeScenarioP === scenarioP_CallStart) {
+            } else if (activeScenarioP === scenarioP_called) {
                 connectCall();
             } else if (activeScenarioP === scenario_Connected) {
                 changeScenarioP(scenarioP_CallNotice);

@@ -29,8 +29,6 @@
         window.onload = () => {
             // loginScreen.style.display = "none";
             chatScreen.style.display = "flex";
-
-            resizeCanvas();
         };
 
         const messageList = document.querySelector(".messages");
@@ -306,24 +304,45 @@
     //メモキャンバス
     const canvas = document.getElementById("memoCanvas");
     const ctx = canvas.getContext("2d");
+
+    //描画オプション
+    let currentWidth = 5;
+    let eraser = false;
+
+    const penBtn = document.getElementById("penColor");
+    const eraserBtn = document.getElementById("eraserBtn");
+    const clearBtn = document.getElementById("clearBtn");
     
     function resizeCanvas() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
 
          //線の設定
-        ctx.lineWidth = 3;
+        ctx.lineWidth = currentWidth;
         ctx.lineCap = "round";
-        ctx.strokeStyle = "white";
-
-        console.log(canvas.width, canvas.height);
+        ctx.strokeStyle = penColor.value;
     }
+
+    window.addEventListener("load", () => {
+        resizeCanvas();
+
+        ctx.fillStyle = "909ab1";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    });
     
     let drawing = false;
 
     //マウスをクリック
     canvas.addEventListener("mousedown", (e) => {
         drawing = true;
+
+        ctx.lineWidth = currentWidth;
+
+        if (eraser) {
+            ctx.strokeStyle = "#909ab1";
+        } else {
+            ctx.strokeStyle = penColor.value;
+        }
 
         ctx.beginPath();
         ctx.moveTo(e.offsetX, e.offsetY);
@@ -347,4 +366,31 @@
     canvas.addEventListener("mouseleave", () => {
         drawing = false;
     });
+
+    
+
+    document.querySelectorAll(".width-btn").forEach(btn => {
+
+        btn.onclick = () => {
+            document.querySelector(".width-btn.active")?.classList.remove("active");
+            btn.classList.add("active");
+
+            currentWidth = Number(btn.dataset.width);
+        }
+    })
+
+    //消しゴム
+    penBtn.onclick = () => {
+        eraser = false;
+    }
+
+    eraserBtn.onclick = () => {
+        eraser = true;
+    }
+
+    clearBtn.onclick = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#909ab1";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 

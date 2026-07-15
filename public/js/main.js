@@ -29,6 +29,8 @@
         window.onload = () => {
             // loginScreen.style.display = "none";
             chatScreen.style.display = "flex";
+
+            resizeCanvas();
         };
 
         const messageList = document.querySelector(".messages");
@@ -43,7 +45,7 @@
             toggleOverlay.classList.toggle("closed");
 
             if (!overlay.classList.contains("hidden")) {
-                resizeCanvas();
+                setTimeout(resizeCanvas, 300);
             }
         }
 
@@ -58,23 +60,24 @@
         function showMessage(speaker, text){
             addMessage("system-id", speaker, text);
         }
+
+        const chat = document.querySelector(".chat");
+
         // クリックで進める（K)
-        document.addEventListener("click", (e) => {
+        chat.addEventListener("click", (e) => {
 
-        //オーバーレイ内のクリックは影響しない
-        if(e.target.closest(".overlay")) return;
-        // 選択肢ボタンでは進めない
-        if(e.target.classList.contains("choice")) return;    
+            // 選択肢ボタンでは進めない
+            if(e.target.classList.contains("choice")) return;    
 
-        // 選択肢が出ている時は進めない
-        const choicesArea = document.getElementById("choices");
-        if (choicesArea.children.length > 0) return;
+            // 選択肢が出ている時は進めない
+            const choicesArea = document.getElementById("choices");
+            if (choicesArea.children.length > 0) return;
 
-        ws.send(JSON.stringify({
+            ws.send(JSON.stringify({
             type: "request-next-line",
             role: myRole
-        }));
-    });
+            }));
+        });
 
 
         //メッセージを画面に追加
@@ -264,29 +267,26 @@
     const canvas = document.getElementById("memoCanvas");
     const ctx = canvas.getContext("2d");
     
-    //絵画サイズの調整
     function resizeCanvas() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
 
-        //線の設定
+         //線の設定
         ctx.lineWidth = 3;
         ctx.lineCap = "round";
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = "white";
+
+        console.log(canvas.width, canvas.height);
     }
-
-    window.addEventListener("load", resizeCanvas);
-
+    
     let drawing = false;
 
     //マウスをクリック
     canvas.addEventListener("mousedown", (e) => {
         drawing = true;
 
-        const rect = canvas.getBoundingClientRect();
-
         ctx.beginPath();
-        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.moveTo(e.offsetX, e.offsetY);
     });
 
     //マウスを動かす
@@ -294,9 +294,7 @@
 
         if (!drawing) return;
         
-        const rect = canvas.getBoundingClientRect();
-
-        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.lineTo(e.offsetX, e.offsetY);
         ctx.stroke();
     });
 

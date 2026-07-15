@@ -1,5 +1,8 @@
 const express = require('express');
 const expressWs = require('express-ws');
+const pazzleID = "[A1412D3]"
+const puzzlePASS = "[2146]";
+let puzzleSolved = false;
 
 const app = express();
 expressWs(app);
@@ -129,19 +132,28 @@ const scenarioP_CallNotice = [
 
 // 謎解きパート開始
 
+const scenarioD_puzzleID = [
+    { speaker: "Ai Wo", text: "ID を [] で囲いチャットに送信してください。" },
+    { speaker: "Manual", type: "img", src: "D_2.png"}
+];
 
+const scenarioP_puzzleID = [
+    { speaker: "Manual", type: "img", src: "P_2.png"}
+];
 
+const scenarioD_puzzleID = [
+    { speaker: "Ai Wo", text: "パスワード を [] で囲いチャットに送信してください。" },
+    { speaker: "Manual", type: "img", src: "D_1.png"}
+];
 
-
-
-
-
-
+const scenarioP_puzzleID = [
+    { speaker: "Manual", type: "img", src: "P_1.png"}
+];
 
 
 //謎解きパート終了
 
-const scenario_endhing = [
+const scenario_ending = [
     { speaker: "Ai Wo", text: "エラー対処完了。" },
     { speaker: "Ai Wo", text: "素晴らしい働きです。" },
     { speaker: "Ai Wo", text: "今回の報告書を作成中…" },
@@ -220,7 +232,26 @@ app.ws('/ws', (ws, req) => {
             };
             broadcast(sendData);
             console.log(`プレイヤーチャットを受信: ${data.role || '不明'}: ${data.text}`);
+
+            if (ws.role === "D-2519" && !puzzleSolved) {
+
+            if (data.text.trim() === puzzleID) {
+                sendToRole("D-2519", { type: "system-message", text: "ID 認証成功" });
+
+                changeScenarioD(scenarioD_pazzlePass);
+                changeScenarioP(scenarioP_pazzlePass);
+            }
+
+            if (data.text.trim() === puzzlePASS) {
+                sendToRole("D-2519", { type: "system-message", text: "パスワード 認証成功" });
+                puzzleSolved = true;
+
+                changeScenarioD(scenario_ending);
+                changeScenarioP(scenario_ending);
+            }
         }
+    }
+        
 
         // 3. タイピング成功
         if (data.type === "typing-success") {

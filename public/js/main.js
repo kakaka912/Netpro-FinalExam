@@ -169,6 +169,13 @@
                     startTypingGame();
                     return;
                 }
+
+                // 画像表示(K)
+                if (line.type === "img") {
+                showImage(line.src);
+                return;
+                }
+
             }
 
             //チャット受信
@@ -256,6 +263,23 @@
         document.getElementById("typingArea").textContent = letter;
         currentLetter = letter;
         }
+
+        // 画像表示定義 (K)
+        function showImage(src) {
+        addMessage("system-id", "System", `[画像: ${src}]`);
+
+        const li = document.createElement("li");
+        li.classList.add("message", "other");
+
+        const img = document.createElement("img");
+        img.src = "./img/" + src;
+        img.classList.add("scenario-image");
+
+        li.appendChild(img);
+        messageList.appendChild(li);
+        messageList.scrollTop = messageList.scrollHeight;
+}
+
 
 
         //フォーム送信

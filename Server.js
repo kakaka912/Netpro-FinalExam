@@ -386,7 +386,7 @@ function handleNextLine(role) {
             } else if (activeScenarioP === scenario_Connected) {
                 changeScenarioP(scenarioP_CallNotice);
             } else if (activeScenarioP === scenarioP_CallNotice) {
-                changeScenarioD(scenarioP_puzzleID);
+                changeScenarioP(scenarioP_puzzleID);
             } else {
                 sendToRole('P-0901', { type: 'scenario-end' });
             }

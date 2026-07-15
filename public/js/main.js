@@ -74,7 +74,10 @@
     document.addEventListener("keydown", (e) => {
         if (!currentLetter) return;
 
-        if (e.key.toUpperCase() === currentLetter) {
+        const key = e.key.toUpperCase();
+
+        if (key === currentLetter) {
+            addMessage(myId, username, key);
             typingCountLocal++;
 
             ws.send(JSON.stringify({
@@ -137,11 +140,6 @@
                 username = data.role; // username = role名（K)
             }
 
-            // D側タイピングゲーム開始 (K)
-            if(data.type === "typing-start") {
-                startTypingGame();
-            }
-
             //シナリオ
             if(data.type === "next-line"){
 
@@ -158,6 +156,12 @@
                     hideChoices();
 
                     showMessage(line.speaker,line.text);
+                }
+
+                // D側タイピングゲーム開始 (K)
+                if(data.type === "typing") {
+                    startTypingGame();
+                    return;
                 }
             }
 

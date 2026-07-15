@@ -166,7 +166,7 @@
                 }
 
                 // D側タイピングゲーム開始 (K)
-                if(data.type === "typing") {
+                if(line.type === "typing") {
                     startTypingGame();
                     return;
                 }
@@ -261,9 +261,11 @@
 
         function showNextLetter() {
         const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-        document.getElementById("typingArea").textContent = letter;
         currentLetter = letter;
-        }
+
+        addMessage("system-id", "Computer", `【${letter}】 `);
+    }
+
 
         // 画像表示定義 (K)
         function showImage(src) {

@@ -309,7 +309,7 @@
     let currentWidth = 5;
     let eraser = false;
 
-    const penBtn = document.getElementById("penColor");
+    const penBtn = document.getElementById("penBtn");
     const eraserBtn = document.getElementById("eraserBtn");
     const clearBtn = document.getElementById("clearBtn");
     
@@ -394,3 +394,23 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
+    //設定(文字サイズ変更)
+    const fontSize = document.getElementById("fontSize");
+
+    fontSize.addEventListener("input", () => {
+        const size = parseInt(fontSize.value);
+        
+        if(!isNaN(size)) {
+            chat.style.fontSize = size + "px";
+        }
+    });
+
+    //設定(色覚補正モード)
+    const colorMode = document.getElementById("colorMode");
+
+    colorMode.onchange = () => {
+        chat.classList.remove("protanopia", "deuteranopia", "tritanopia");
+        if(colorMode.value !== "off") {
+            chat.classList.add(colorMode.value);
+        }
+};

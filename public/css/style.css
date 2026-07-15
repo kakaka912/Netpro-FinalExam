@@ -132,6 +132,7 @@ body::before {
 }
 
 .overlay-content {
+    padding-top: 60px;
     transition: opacity 0.2s ease;
 }
 
@@ -323,6 +324,30 @@ body::before {
 
 .message.other .bubble {
     background: #245869;
+}
+
+.chat.protanopia .message.my .bubble {
+    background: #2c5aa0;
+}
+
+.chat.protanopia .message.other .bubble {
+    background: #6a4c93;
+}
+
+.chat.deuteranopia .message.my .bubble {
+    background: #005f73;
+}
+
+.chat.deuteranopia .message.other .bubble {
+    background: #9b5de5;
+}
+
+.chat.tritanopia .message.my .bubble {
+    background: #5c677d;
+}
+
+.chat.tritanopia .message.other .bubble {
+    background: #ff9f1c;
 }
 
 .form {

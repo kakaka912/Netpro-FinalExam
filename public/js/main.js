@@ -130,51 +130,50 @@
         }
 
         ws.onmessage = (event) => {
-
     const data = JSON.parse(event.data);
+    console.log("受信:", JSON.stringify(data, null, 2));
 
-    // チャット開放（K）
+    // チャット開放
     if (data.type === "toggle-chat") {
         chatMode = data.mode;
-        currentLetter = null;   // ★タイピング終了
+        currentLetter = null; // surrentLetter → currentLetter に修正
         return;
     }
-
-    console.log("受信:", JSON.stringify(data, null, 2));
 
     // 役割
     if (data.type === "assigned-role") {
         myRole = data.role;
-        username = data.role; // role名をそのまま名前に
+        username = data.role; // role名をそのままユーザー名に
         return;
     }
 
     // シナリオ
     if (data.type === "next-line") {
-
         const line = data.data;
 
-        // ★画像表示
-        if (line.type === "img") {
-            showImage(line.src);
-            return;
-        }
+        hideChoices(); // 毎回いったん消す
 
-        // ★タイピング開始
-        if (line.type === "typing") {
-            startTypingGame();
-            return;
-        }
-
-        // ★選択肢
+        // 選択肢
         if (line.type === "choice") {
             showChoices(line.choices);
             return;
         }
 
-        // ★通常メッセージ
-        hideChoices();
+        // タイピング開始
+        if (line.type === "typing") {
+            startTypingGame();
+            return;
+        }
+
+        // 画像表示
+        if (line.type === "img") {
+            showImage(line.src);
+            return;
+        }
+
+        // 通常メッセージ
         showMessage(line.speaker, line.text);
+        return;
     }
 
     // チャット受信
@@ -272,7 +271,7 @@
             li.classList.add("message", "other");
 
             const img = document.createElement("img");
-            img.src = "img/" + src;
+            img.src = "/img/" + src;
             img.classList.add("scenario-image");
 
             li.appendChild(img);

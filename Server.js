@@ -3,6 +3,7 @@ const expressWs = require('express-ws');
 const puzzleID = "[A1412D3]"
 const puzzlePASS = "[2146]";
 let puzzleSolved = false;
+let callConnected = false;
 
 const app = express();
 expressWs(app);
@@ -346,10 +347,12 @@ function connectCall() {
 
 // 合流
 function checkMergeCondition() {
+    // まだコール接続していない ＋ タイピング3回以上 ＋ Pがwaitを終えている
     if (!callConnected && typingCount >= 3 && pReachedWait) {
         changeScenarioD(scenarioD_Trouble);
     }
 }
+
 
 // シナリオ読み込み
 function handleNextLine(role) {
@@ -359,12 +362,13 @@ function handleNextLine(role) {
             sendToRole('D-2519', { type: 'next-line', data: activeScenarioD[currentLineD] });
         } else {
             if (activeScenarioD === scenarioD_Trouble) {
-                // トラブルの後にコール開始
+                // トラブルを読み終えたらコール開始シナリオへ
                 changeScenarioD(scenarioD_CallStart);
             } else if (activeScenarioD === scenarioD_CallStart) {
+                // CallStart を読み終えたタイミングで一度だけ接続
                 if (!callConnected) {
                     callConnected = true;
-                    connectCall(); // チャット開放＆scenario_Connected
+                    connectCall(); // チャット開放＆両者 scenario_Connected へ
                 }
             } else if (activeScenarioD === scenario_Connected) {
                 // 接続後の案内
@@ -376,17 +380,24 @@ function handleNextLine(role) {
                 sendToRole('D-2519', { type: 'scenario-end' });
             }
         }
-    } else if (role === 'P-0901') {
+    }
+}
+
+
+function handleNextLine(role) {
+    if (role === 'P-0901') {
         currentLineP++;
         if (currentLineP < activeScenarioP.length) {
             sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
         } else {
             if (activeScenarioP === scenarioP_wait) {
+                // wait を読み終えたら 3秒後に called へ
                 setTimeout(() => {
                     pReachedWait = true;
                     changeScenarioP(scenarioP_called);
                 }, 3000);
             } else if (activeScenarioP === scenarioP_called) {
+                // D側がコール接続済みなら、P側も Connected へ
                 if (callConnected) {
                     changeScenarioP(scenario_Connected);
                 }
@@ -400,6 +411,7 @@ function handleNextLine(role) {
         }
     }
 }
+
 
 
 // Dシナリオ切り替え

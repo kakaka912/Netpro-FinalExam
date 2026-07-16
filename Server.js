@@ -136,7 +136,7 @@ const scenarioD_puzzleID = [
 ];
 
 const scenarioP_puzzleID = [
-    { speaker: "Manual", type: "img", src: img/"P_2.png"}
+    { speaker: "Manual", type: "img", src: "img/P_2.png"}
 ];
 
 const scenarioD_puzzlePass = [

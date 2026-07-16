@@ -1,6 +1,6 @@
 const express = require('express');
 const expressWs = require('express-ws');
-const puzzleID = "[A1412D3]"
+const puzzleID = "[A1412D3]";
 const puzzlePASS = "[2146]";
 let puzzleSolved = false;
 let callConnected = false;
@@ -11,7 +11,7 @@ expressWs(app);
 const port = process.env.PORT || 3000;
 let connects = []; // 接続されているWebSocketのリスト
 let playerCount = 0; // 接続人数
-let chatEnabled = false; //チャット有効フラグ（初期設定：無効）
+let chatEnabled = false; //チャット有効フラグ
 let typingCount = 0; // タイピングに成功した回数
 let pReachedWait = false; // Pが合流シナリオに到達 
 
@@ -19,7 +19,6 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// 日付取得
 function getTodayString() {
     const now = new Date();
     const month = now.getMonth() + 1;
@@ -29,9 +28,9 @@ function getTodayString() {
     return `${month} 月 ${date} 日の ${day} 曜日`;
 }
 
-// シナリオデータ
 const todayText = getTodayString();
 
+// シナリオデータ
 const scenarioD_WakeUp = [
     { speaker: "System", text: "※チャットは通信相手に見えません" },
     { speaker: "System", text: "【Cランク地区9-505棟】" },
@@ -39,13 +38,13 @@ const scenarioD_WakeUp = [
     { speaker: "Ai Min", text: `ただいま ${todayText} 8 時 00 分。本日の最高気温は 38 ℃ 最低気温は 29 ℃。` },
     { speaker: "Ai Min", text: "D-2519 特別予定 2件"},
     { speaker: "Ai Min", text: "・定期検査B" },
-    { speaker: "Ai Min", text: "・隣人評価" },
+    { speaker: "Ai Min", text: "・隣人報告" },
     { speaker: "Ai Min", text: "疑問点は ありますか。" },
     { speaker: "D-2519", type: "choice", choices:["定期検査", "隣人報告", "なし"]}
 ];
 
 const scenarioD_inspection = [
-    { speaker: "D-2519", text: "定期検査" },
+    { speaker: "D-2519", text: "定期検査について尋ねます。" },
     { speaker: "Ai Min", text: "『〇〇の市民は 健康状態の把握 また 管理のため 定期的に 健康診断を受けることが 義務付けられています。" },
     { speaker: "Ai Min", text: "100日ごとに受ける A検査と 10日ごとに受ける B検査が あります。"},
     { speaker: "Ai Min", text: "本日は B検査 です。』" },
@@ -54,7 +53,7 @@ const scenarioD_inspection = [
 ];
 
 const scenarioD_report = [
-    { speaker: "D-2519", text: "隣人評価" },
+    { speaker: "D-2519", text: "隣人報告について尋ねます。" },
     { speaker: "Ai Min", text: "『〇〇の市民は 治安維持のため 反政府組織の疑いがある人物を 報告することが 義務付けられています。" },
     { speaker: "Ai Min", text: "提出要請は 不定期かつ公平な審査のもと行われます。』" },
     { speaker: "Ai Min", text: "疑問点は ありますか。" },
@@ -101,7 +100,7 @@ const scenarioP_Work = [
 ];
 
 const scenarioP_manualTutorial = [
-    { speaker: "Manual", type: "img"},
+    { speaker: "Manual", type: "img", src: "manual_tut.png"}, // マニュアル画像のソース
     { speaker: "P-0901", type: "choice", choices:["システムを再起動してください"]}
 ];
 
@@ -131,8 +130,6 @@ const scenarioP_CallNotice = [
     { speaker: "P-0901", type: "choice", choices: ["マニュアルを開く[4-0-2-9]"] }
 ];
 
-// 謎解きパート開始
-
 const scenarioD_puzzleID = [
     { speaker: "Ai Wo", text: "ID を [] で囲いチャットに送信してください。" },
     { speaker: "Manual", type: "img", src: "D_2.png"}
@@ -151,9 +148,6 @@ const scenarioP_puzzlePass = [
     { speaker: "Manual", type: "img", src: "P_1.png"}
 ];
 
-
-//謎解きパート終了
-
 const scenario_ending = [
     { speaker: "Ai Wo", text: "エラー対処完了。" },
     { speaker: "Ai Wo", text: "素晴らしい働きです。" },
@@ -164,143 +158,127 @@ const scenario_ending = [
     { speaker: "System", type: "end" }
 ];
 
-
-
 let currentLineD = 0;
 let currentLineP = 0;
 
 let activeScenarioD = scenarioD_WakeUp;
 let activeScenarioP = scenarioP_WakeUp;
 
-// 通信時
 app.ws('/ws', (ws, req) => {
-    
-    // 満員チェック
     if (playerCount >= 2) {
-        console.log('満員の為、第三者の接続を拒否しました。');
-        ws.send(JSON.stringify({ type: 'room-full', text: 'サーバーが満員です。時間をおいてお試しください。' }));
+        ws.send(JSON.stringify({ type: 'room-full', text: 'サーバーが満員です。' }));
         ws.close();
         return;
     }
 
     connects.push(ws);
     playerCount++;
-    console.log(`新しいプレイヤーが接続しました。現在の接続人数：${playerCount}人`);
 
-    // 接続した順番で役割（Role）を割り振って本人に通知
     if (playerCount === 1) {
         ws.role = 'D-2519';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'D-2519'}));
         ws.send(JSON.stringify({ type: 'toggle-chat', mode: 'local'}));
-        console.log('一人目のプレイヤーにD-2519を割り当て');
     } else if (playerCount === 2) {
         ws.role = 'P-0901';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901'}));
         ws.send(JSON.stringify({ type: 'toggle-chat', mode: 'local'}));
-        console.log('二人目のプレイヤーにP-0901を割り当て ゲームを開始');
-
-        // 少しだけタイミングをずらして確実にコネクションが確立されてから開始する
         setTimeout(() => {
             startGame();
         }, 500);
     }
 
-    // クライアントからメッセージを受け取った時の処理
     ws.on('message', (raw) => {
         try{
             const data = JSON.parse(raw.toString());
 
-        // 1. 画面をクリックして次のセリフを要求された時
-        if (data.type === 'request-next-line') {
-            handleNextLine(data.role);
-        }
+            if (data.type === 'request-next-line') {
+                // P側がすでにコール受信（待機）状態になっている場合は、連打による進行を防止する
+                if (data.role === 'P-0901' && activeScenarioP === scenarioP_called) {
+                    return; 
+                }
+                handleNextLine(data.role);
+            }
 
-        // 2. プレイヤー同士のチャット（テキストをそのままブロードキャスト）
-        if (data.type === 'chat') {
-
-            if(!chatEnabled) {
-                ws.send(JSON.stringify({
-                    type: "chat",
+            if (data.type === 'chat') {
+                if(!chatEnabled) {
+                    ws.send(JSON.stringify({
+                        type: "chat",
+                        id: data.id,
+                        username: data.username,
+                        text: data.text,
+                        local: true
+                    }));
+                    return;
+                }
+                const sendData = {
+                    type: 'chat',
                     id: data.id,
-                    username: data.username,
-                    text: data.text,
-                    local: true
-                }));
-                return;
-            }
-            const sendData = {
-                type: 'chat',
-                id: data.id,
-                username: data.username || ws.username || '名無し',
-                text: data.text || ''
-            };
-            broadcast(sendData);
-            console.log(`プレイヤーチャットを受信: ${data.role || '不明'}: ${data.text}`);
+                    username: data.username || ws.username || '名無し',
+                    text: data.text || ''
+                };
+                broadcast(sendData);
 
-            if (ws.role === "D-2519" && !puzzleSolved) {
-
-            if (data.text.trim() === puzzleID) {
-                sendToRole("D-2519", { type: "system-message", text: "ID 認証成功" });
-
-                changeScenarioD(scenarioD_puzzlePass);
-                changeScenarioP(scenarioP_puzzlePass);
+                if (ws.role === "D-2519" && !puzzleSolved) {
+                    if (data.text.trim() === puzzleID) {
+                        sendToRole("D-2519", { type: "system-message", text: "ID 認証成功" });
+                        changeScenarioD(scenarioD_puzzlePass);
+                        changeScenarioP(scenarioP_puzzlePass);
+                    }
+                    if (data.text.trim() === puzzlePASS) {
+                        sendToRole("D-2519", { type: "system-message", text: "パスワード 認証成功" });
+                        puzzleSolved = true;
+                        changeScenarioD(scenario_ending);
+                        changeScenarioP(scenario_ending);
+                    }
+                }
             }
 
-            if (data.text.trim() === puzzlePASS) {
-                sendToRole("D-2519", { type: "system-message", text: "パスワード 認証成功" });
-                puzzleSolved = true;
-
-                changeScenarioD(scenario_ending);
-                changeScenarioP(scenario_ending);
-            }
-        }
+            // タイピング成功時の処理
+if (data.type === "typing-success") {
+    typingCount++;
+    
+    // P側がすでに待機状態（pReachedWaitがtrue）かつ、タイピングが3回以上の場合のみ合流
+    if (!callConnected && typingCount >= 3 && pReachedWait) {
+        callConnected = true; // コール接続フラグを立てる
+        sendToRole('D-2519', { type: 'stop-typing' }); // D側のタイピングを止める
+        changeScenarioD(scenarioD_Trouble);
+    } else {
+        // 条件が揃っていない場合は、D側に「次の文字に進んでいいよ」という通知を送る
+        sendToRole('D-2519', { type: 'continue-typing' });
     }
-        
+}
 
-        // 3. タイピング成功
-        if (data.type === "typing-success") {
-        typingCount++;
-        checkMergeCondition();
-        }
-
-
-        // 4. 選択肢ボタンが押された時
-        if (data.type === 'player-choice') {
-            console.log(`${data.role}が選択: ${data.choice}`);
-
-            if (data.role === 'D-2519') {
-                if (data.choice === '定期検査') {
-                    changeScenarioD(scenarioD_inspection);
-                } else if (data.choice === '隣人評価' || data.choice === '隣人報告') {
-                    changeScenarioD(scenarioD_report);
-                } else if (data.choice === 'なし') {
-                    changeScenarioD(scenarioD_Work);
-                }
-            } else if (data.role === 'P-0901') {
-                if (data.choice === '確認した') {
-                    changeScenarioP(scenarioP_Work);
-                } else if (data.choice === '[1-0-2] マニュアルを開く') {
-                    changeScenarioP(scenarioP_manualTutorial);
-                } else if (data.choice === 'システムを再起動してください') {
-                    changeScenarioP(scenarioP_wait);
+            if (data.type === 'player-choice') {
+                if (data.role === 'D-2519') {
+                    if (data.choice === '定期検査') {
+                        changeScenarioD(scenarioD_inspection);
+                    } else if (data.choice === '隣人報告' || data.choice === '隣人評価') {
+                        changeScenarioD(scenarioD_report);
+                    } else if (data.choice === 'なし') {
+                        changeScenarioD(scenarioD_Work);
+                    }
+                } else if (data.role === 'P-0901') {
+                    if (data.choice === '確認した') {
+                        changeScenarioP(scenarioP_Work);
+                    } else if (data.choice === '[1-0-2] マニュアルを開く') {
+                        changeScenarioP(scenarioP_manualTutorial);
+                    } else if (data.choice === 'システムを再起動してください') {
+                        changeScenarioP(scenarioP_wait);
+                    }
                 }
             }
-        }
-    }catch(e){
-        console.error('データの解析または処理に失敗しました', e)
+        }catch(e){
+            console.error('データの解析または処理に失敗しました', e)
         }
     });
 
-    // 接続が切れたとき
     ws.on('close', () => {
         connects = connects.filter((conn) => conn !== ws);
         playerCount--;
-        console.log(`プレイヤーが切断しました。現在の接続人数：${playerCount}人`);
         if (playerCount < 0) playerCount = 0;
     });
 });
 
-// 全員にデータを一斉送信する関数
 function broadcast(obj) {
     const msg = JSON.stringify(obj);
     connects.forEach((socket) => {
@@ -310,7 +288,6 @@ function broadcast(obj) {
     });
 }
 
-// 特定の役割（DかPか）のプレイヤーだけに送信する関数
 function sendToRole(role, obj) {
     const msg = JSON.stringify(obj);
     connects.forEach((socket) => {
@@ -320,10 +297,8 @@ function sendToRole(role, obj) {
     });
 }
 
-// ゲーム開始
 function startGame() {
     broadcast({ type: 'system-message', text: '接続が確立されました。ゲームを開始します' });
-
     currentLineD = 0;
     currentLineP = 0;
     activeScenarioD = scenarioD_WakeUp;
@@ -333,10 +308,8 @@ function startGame() {
     sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
 }
 
-// チャット開放
 function connectCall() {
     chatEnabled = true;
-
     activeScenarioD = scenario_Connected;
     activeScenarioP = scenario_Connected;
     currentLineD = 0;
@@ -348,16 +321,15 @@ function connectCall() {
     broadcast({ type: 'toggle-chat', mode: "global"}); 
 }
 
-// 合流
 function checkMergeCondition() {
-    // まだコール接続していない ＋ タイピング3回以上 ＋ Pがwaitを終えている
+    // 3回成功＋Pが合流待機中であれば、D側にトラブルを発生させる
     if (!callConnected && typingCount >= 3 && pReachedWait) {
+        // D側クライアントに「タイピングを中断しろ」という指示を送る
+        sendToRole('D-2519', { type: 'stop-typing' });
         changeScenarioD(scenarioD_Trouble);
     }
 }
 
-
-// シナリオ読み込み
 function handleNextLine(role) {
     if (role === 'D-2519') {
         currentLineD++;
@@ -365,37 +337,38 @@ function handleNextLine(role) {
             sendToRole('D-2519', { type: 'next-line', data: activeScenarioD[currentLineD] });
         } else {
             if (activeScenarioD === scenarioD_Trouble) {
-                // トラブルを読み終えたらコール開始シナリオへ
                 changeScenarioD(scenarioD_CallStart);
             } else if (activeScenarioD === scenarioD_CallStart) {
-                // CallStart を読み終えたタイミングで一度だけ接続
                 if (!callConnected) {
                     callConnected = true;
-                    connectCall(); // チャット開放＆両者 scenario_Connected へ
+                    connectCall();
                 }
             } else if (activeScenarioD === scenario_Connected) {
-                // 接続後の案内
                 changeScenarioD(scenarioD_CallNotice);
             } else if (activeScenarioD === scenarioD_CallNotice) {
-                // 謎解きへ
                 changeScenarioD(scenarioD_puzzleID);
             } else {
                 sendToRole('D-2519', { type: 'scenario-end' });
             }
         }
-    } else if (role === 'P-0901') {
-        currentLineP++;
-        if (currentLineP < activeScenarioP.length) {
-            sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
-        } else {
-            if (activeScenarioP === scenarioP_wait) {
-                // wait を読み終えたら 3秒後に called へ
-                setTimeout(() => {
-                    pReachedWait = true;
-                    changeScenarioP(scenarioP_called);
-                }, 3000);
+    }  else if (role === 'P-0901') {
+    currentLineP++;
+    if (currentLineP < activeScenarioP.length) {
+        sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
+    } else {
+        if (activeScenarioP === scenarioP_wait) {
+            if (!pReachedWait) {
+                pReachedWait = true;
+                changeScenarioP(scenarioP_called);
+                
+                // P側がここに到達した瞬間に、すでにD側が3回以上タイピングを成功させているかチェック
+                if (!callConnected && typingCount >= 3) {
+                    callConnected = true;
+                    sendToRole('D-2519', { type: 'stop-typing' });
+                    changeScenarioD(scenarioD_Trouble);
+                }
+            }
             } else if (activeScenarioP === scenarioP_called) {
-                // D側がコール接続済みなら、P側も Connected へ
                 if (callConnected) {
                     changeScenarioP(scenario_Connected);
                 }
@@ -410,16 +383,12 @@ function handleNextLine(role) {
     }
 }
 
-
-
-// Dシナリオ切り替え
 function changeScenarioD(newScenario) {
     activeScenarioD = newScenario;
     currentLineD = 0;
     sendToRole('D-2519', { type: 'next-line', data: activeScenarioD[currentLineD] });
 }
 
-// Pシナリオ切り替え
 function changeScenarioP(newScenario) {
     activeScenarioP = newScenario;
     currentLineP = 0;

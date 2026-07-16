@@ -4,6 +4,7 @@
         let username = "";
         let myRole = "";
         let chatMode = "local" //(K)
+        let isTypingActive = false; //(K)
 
         const loginScreen = document.getElementById("loginScreen");
         const usernameInput = document. getElementById("usernameInput");
@@ -71,6 +72,9 @@
             const choicesArea = document.getElementById("choices");
             if (choicesArea.children.length > 0) return;
 
+            // タイピング中は進めない (K)
+            if(e.target.classList.contains("choice")) return;
+
             ws.send(JSON.stringify({
             type: "request-next-line",
             role: myRole
@@ -79,7 +83,7 @@
 
     // 成功判定 (K)
     document.addEventListener("keydown", (e) => {
-        if (!currentLetter) return;
+        if (!isTypingActive || !currentLetter) return;
 
         const key = e.key.toUpperCase();
 
@@ -136,7 +140,8 @@
     // チャット開放
     if (data.type === "toggle-chat") {
         chatMode = data.mode;
-        currentLetter = null; // surrentLetter → currentLetter に修正
+        currentLetter = null; // surrentLetter → currentLetter
+        isTypingActive = false;
         return;
     }
 
@@ -146,6 +151,13 @@
         username = data.role; // role名をそのままユーザー名に
         return;
     }
+
+    // タイピング強制停止
+        if (data.type === "stop-typing") {
+            isTypingActive = false;
+            currentLetter = null;
+            return;
+        }
 
     // シナリオ
     if (data.type === "next-line") {
@@ -254,6 +266,7 @@
         // タイピングゲーム (K)
         function startTypingGame() {
         typingCountLocal = 0;
+        isTypingActive = true;
         showNextLetter();
         }
 
@@ -267,20 +280,35 @@
 
         // 画像表示定義 (K)
         function showImage(src){
-            const li = document.createElement("li");
-            li.classList.add("message", "other");
+    const li = document.createElement("li");
+    li.classList.add("message", "other");
 
-            const img = document.createElement("img");
-            img.src = "/img/" + src;
-            img.classList.add("scenario-image");
+    // 画像用の吹き出しラッパーを挟むことでCSSを適用させる
+    const bubble = document.createElement("div");
+    bubble.classList.add("bubble");
 
-            li.appendChild(img);
-            messageList.appendChild(li);
-            messageList.scrollTop = messageList.scrollHeight;
-        }
+    const img = document.createElement("img");
+    // パスを確実に通すために「/img/」だけでなく相対パスも考慮
+    img.src = "img/" + src; 
+    img.classList.add("scenario-image");
+    
+    // 画像の読み込みエラーが発生した際のフォールバック処理
+    img.onerror = () => {
+        img.src = "/img/" + src; // パスのパターンを切り替えて再試行
+    };
 
+    bubble.appendChild(img);
+    li.appendChild(bubble);
+    
+    // システムメッセージのように送信元を添える
+    const name = document.createElement("span");
+    name.classList.add("username");
+    name.textContent = "System";
+    li.appendChild(name);
 
-
+    messageList.appendChild(li);
+    messageList.scrollTop = messageList.scrollHeight;
+}
 
         //フォーム送信
         form.onsubmit = function (e) {

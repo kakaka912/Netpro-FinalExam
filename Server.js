@@ -380,12 +380,7 @@ function handleNextLine(role) {
                 sendToRole('D-2519', { type: 'scenario-end' });
             }
         }
-    }
-}
-
-
-function handleNextLine(role) {
-    if (role === 'P-0901') {
+    } else if (role === 'P-0901') {
         currentLineP++;
         if (currentLineP < activeScenarioP.length) {
             sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });

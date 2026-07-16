@@ -81,23 +81,23 @@
             }));
         });
 
-    // 成功判定 (K)
+    // タイピンゲーム判定 (K)  
     document.addEventListener("keydown", (e) => {
-        if (!isTypingActive || !currentLetter) return;
+    if (!isTypingActive || !currentLetter) return;
 
-        const key = e.key.toUpperCase();
+    const key = e.key.toUpperCase();
 
-        if (key === currentLetter) {
-            addMessage(myId, username, key);
-            typingCountLocal++;
+    if (key === currentLetter) {
+        addMessage(myId, username, key);
+        typingCountLocal++;
 
-            ws.send(JSON.stringify({
-                type: "typing-success",
-                role: myRole
+        // キーが合っていたら一旦お題の文字をクリアし、サーバーの返答を待つ
+        currentLetter = null;
+
+        ws.send(JSON.stringify({
+            type: "typing-success",
+            role: myRole
         }));
-
-        // 次の文字へ
-        showNextLetter();
     }
 });
 
@@ -152,12 +152,19 @@
         return;
     }
 
-    // タイピング強制停止
-        if (data.type === "stop-typing") {
-            isTypingActive = false;
-            currentLetter = null;
-            return;
-        }
+    // タイピングゲーム継続
+    if (data.type === "continue-typing") {
+        showNextLetter();
+        return;
+    }
+
+    // タイピングゲーム強制停止
+    if (data.type === "stop-typing") {
+        isTypingActive = false;
+        currentLetter = null;
+        addMessage("system-id", "Computer", "警告: 応答がありません。処理を中断します...");
+        return;
+    }
 
     // シナリオ
     if (data.type === "next-line") {

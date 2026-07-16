@@ -13,7 +13,7 @@ let connects = []; // 接続されているWebSocketのリスト
 let playerCount = 0; // 接続人数
 let chatEnabled = false; //チャット有効フラグ
 let typingCount = 0; // タイピングに成功した回数
-let pReachedWait = false; // Pが合流シナリオに到達 
+let pReachedWait = false; // Pが合流待機中かどうかのフラグ
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -100,7 +100,7 @@ const scenarioP_Work = [
 ];
 
 const scenarioP_manualTutorial = [
-    { speaker: "Manual", type: "img", src: "manual_tut.png"}, // マニュアル画像のソース
+    { speaker: "Manual", type: "img", src: "manual_tut.png"}, 
     { speaker: "P-0901", type: "choice", choices:["システムを再起動してください"]}
 ];
 
@@ -192,8 +192,8 @@ app.ws('/ws', (ws, req) => {
             const data = JSON.parse(raw.toString());
 
             if (data.type === 'request-next-line') {
-                // P側がすでにコール受信（待機）状態になっている場合は、連打による進行を防止する
-                if (data.role === 'P-0901' && activeScenarioP === scenarioP_called) {
+                // すでにコール受信状態、または通話接続済みの場合は連打での誤進行を防ぐ
+                if (data.role === 'P-0901' && (activeScenarioP === scenarioP_called || callConnected)) {
                     return; 
                 }
                 handleNextLine(data.role);
@@ -234,19 +234,17 @@ app.ws('/ws', (ws, req) => {
             }
 
             // タイピング成功時の処理
-if (data.type === "typing-success") {
-    typingCount++;
-    
-    // P側がすでに待機状態（pReachedWaitがtrue）かつ、タイピングが3回以上の場合のみ合流
-    if (!callConnected && typingCount >= 3 && pReachedWait) {
-        callConnected = true; // コール接続フラグを立てる
-        sendToRole('D-2519', { type: 'stop-typing' }); // D側のタイピングを止める
-        changeScenarioD(scenarioD_Trouble);
-    } else {
-        // 条件が揃っていない場合は、D側に「次の文字に進んでいいよ」という通知を送る
-        sendToRole('D-2519', { type: 'continue-typing' });
-    }
-}
+            if (data.type === "typing-success") {
+                typingCount++;
+                
+                // P側がすでに待機状態であり、かつタイピングが3回以上の場合のみ合流イベントを発動
+                if (!callConnected && typingCount >= 3 && pReachedWait) {
+                    triggerTroubleEvent();
+                } else {
+                    // 条件が揃うまではD側に「ゲームを続けていいよ」と指示を出す
+                    sendToRole('D-2519', { type: 'continue-typing' });
+                }
+            }
 
             if (data.type === 'player-choice') {
                 if (data.role === 'D-2519') {
@@ -308,6 +306,14 @@ function startGame() {
     sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
 }
 
+// 両者の条件が整ったときに実行される合流演出処理
+function triggerTroubleEvent() {
+    pReachedWait = false; // フラグをリセット
+    sendToRole('D-2519', { type: 'stop-typing' }); // D側のタイピングゲームの稼働を終了させる
+    changeScenarioD(scenarioD_Trouble);
+    changeScenarioP(scenarioP_called); // P側に「コール受信」のメッセージを表示する
+}
+
 function connectCall() {
     chatEnabled = true;
     activeScenarioD = scenario_Connected;
@@ -319,15 +325,6 @@ function connectCall() {
     sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
 
     broadcast({ type: 'toggle-chat', mode: "global"}); 
-}
-
-function checkMergeCondition() {
-    // 3回成功＋Pが合流待機中であれば、D側にトラブルを発生させる
-    if (!callConnected && typingCount >= 3 && pReachedWait) {
-        // D側クライアントに「タイピングを中断しろ」という指示を送る
-        sendToRole('D-2519', { type: 'stop-typing' });
-        changeScenarioD(scenarioD_Trouble);
-    }
 }
 
 function handleNextLine(role) {
@@ -351,23 +348,20 @@ function handleNextLine(role) {
                 sendToRole('D-2519', { type: 'scenario-end' });
             }
         }
-    }  else if (role === 'P-0901') {
-    currentLineP++;
-    if (currentLineP < activeScenarioP.length) {
-        sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
-    } else {
-        if (activeScenarioP === scenarioP_wait) {
-            if (!pReachedWait) {
+    } else if (role === 'P-0901') {
+        currentLineP++;
+        if (currentLineP < activeScenarioP.length) {
+            sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
+        } else {
+            // P側が「コールがかかるまでお待ちください」を全て読み終えたら待機状態へ突入
+            if (activeScenarioP === scenarioP_wait) {
                 pReachedWait = true;
-                changeScenarioP(scenarioP_called);
                 
-                // P側がここに到達した瞬間に、すでにD側が3回以上タイピングを成功させているかチェック
+                // もしこの時点でD側がすでに3回以上タイピングを完了させていたら、即座に合流させる
                 if (!callConnected && typingCount >= 3) {
-                    callConnected = true;
-                    sendToRole('D-2519', { type: 'stop-typing' });
-                    changeScenarioD(scenarioD_Trouble);
+                    triggerTroubleEvent();
                 }
-            }
+                // D側がまだ3回未満なら、P側は何もせずD側が条件を達成するのをここで待つ
             } else if (activeScenarioP === scenarioP_called) {
                 if (callConnected) {
                     changeScenarioP(scenario_Connected);

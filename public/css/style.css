@@ -412,8 +412,7 @@ input:focus {
 /* 謎解き用画像 (K)  */
 .scenario-img {
     width: 100%;          /* 親要素の幅いっぱいに広げる */
-    max-width: 100%;
-    max-height: 300px; 
+    max-width: 50%;
     height: auto;
     object-fit: contain;
     border-radius: 8px;

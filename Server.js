@@ -132,20 +132,20 @@ const scenarioP_CallNotice = [
 
 const scenarioD_puzzleID = [
     { speaker: "Ai Wo", text: "ID を [] で囲いチャットに送信してください。" },
-    { speaker: "Manual", type: "img", src: "img/D_2.PNG"}
+    { speaker: "Manual", type: "img", src: "/img/D_2.PNG"}
 ];
 
 const scenarioP_puzzleID = [
-    { speaker: "Manual", type: "img", src: "img/P_2.PNG"}
+    { speaker: "Manual", type: "img", src: "/img/P_2.PNG"}
 ];
 
 const scenarioD_puzzlePass = [
     { speaker: "Ai Wo", text: "パスワード を [] で囲いチャットに送信してください。" },
-    { speaker: "Manual", type: "img", src: "img/D_1.PNG"}
+    { speaker: "Manual", type: "img", src: "/img/D_1.PNG"}
 ];
 
 const scenarioP_puzzlePass = [
-    { speaker: "Manual", type: "img", src: "img/P_1.PNG"}
+    { speaker: "Manual", type: "img", src: "/img/P_1.PNG"}
 ];
 
 const scenario_ending = [

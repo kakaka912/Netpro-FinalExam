@@ -285,37 +285,37 @@
     }
 
 
-        // 画像表示定義 (K)
         function showImage(src){
     const li = document.createElement("li");
     li.classList.add("message", "other");
 
-    // 画像用の吹き出しラッパーを挟むことでCSSを適用させる
     const bubble = document.createElement("div");
     bubble.classList.add("bubble");
 
     const img = document.createElement("img");
-    // パスを確実に通すために「/img/」だけでなく相対パスも考慮
-    img.src = "img/" + src; 
+
+    // ★絶対にこれが正しいパス
+    img.src = "/img/" + src;
+
     img.classList.add("scenario-image");
-    
-    // 画像の読み込みエラーが発生した際のフォールバック処理
+
     img.onerror = () => {
-        img.src = "/img/" + src; // パスのパターンを切り替えて再試行
+        console.error("画像が読み込めません:", img.src);
     };
 
     bubble.appendChild(img);
     li.appendChild(bubble);
-    
-    // システムメッセージのように送信元を添える
+
+    // ★System と決め打ちしない（Manual の画像なら Manual と表示する）
     const name = document.createElement("span");
     name.classList.add("username");
-    name.textContent = "System";
+    name.textContent = "Manual";  // ← Manual の画像だから Manual
     li.appendChild(name);
 
     messageList.appendChild(li);
     messageList.scrollTop = messageList.scrollHeight;
 }
+
 
         //フォーム送信
         form.onsubmit = function (e) {

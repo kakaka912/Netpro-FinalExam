@@ -196,10 +196,13 @@ app.ws('/ws', (ws, req) => {
     } else if (playerCount === 2) {
         ws.role = 'P-0901';
         ws.send(JSON.stringify({ type: 'assigned-role', role: 'P-0901'}));
-                ws.send(JSON.stringify({ type: 'toggle-chat', mode: 'local'}));
+        ws.send(JSON.stringify({ type: 'toggle-chat', mode: 'local'}));
         console.log('二人目のプレイヤーにP-0901を割り当て ゲームを開始');
 
-        startGame();
+        // 少しだけタイミングをずらして確実にコネクションが確立されてから開始する
+        setTimeout(() => {
+            startGame();
+        }, 500);
     }
 
     // クライアントからメッセージを受け取った時の処理

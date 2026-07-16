@@ -136,6 +136,7 @@
             // チャット開放（K)
             if(data.type === "toggle-chat"){
                     chatMode = data.mode; 
+                    surrentLetter = null;
             }
 
             console.log("受信:", JSON.stringify(data, null, 2));
@@ -158,12 +159,12 @@
 
                     showChoices(line.choices);
 
-                }else{
+                } //else{
 
-                    hideChoices();
+                //    hideChoices();
 
-                    showMessage(line.speaker,line.text);
-                }
+                //    showMessage(line.speaker,line.text);
+                // } (K)
 
                 // D側タイピングゲーム開始 (K)
                 if(line.type === "typing") {
@@ -176,6 +177,9 @@
                 showImage(line.src);
                 return;
                 }
+
+                hideChoices();
+                showMessage(line.speaker, line.text);
 
             }
 
@@ -271,20 +275,19 @@
 
 
         // 画像表示定義 (K)
-        function showImage(src) {
-        addMessage("system-id", "System", `[画像: ${src}]`);
+        function showImage(src){
+            const li = document.createElement("li");
+            li.classList.add("message", "other");
 
-        const li = document.createElement("li");
-        li.classList.add("message", "other");
+            const img = document.createElement("img");
+            img.src = "./img/" + src;   // ← public/img に置く
+            img.classList.add("scenario-image");
 
-        const img = document.createElement("img");
-        img.src = "./img/" + src;
-        img.classList.add("scenario-image");
+            li.appendChild(img);
+            messageList.appendChild(li);
+            messageList.scrollTop = messageList.scrollHeight;
+        }
 
-        li.appendChild(img);
-        messageList.appendChild(li);
-        messageList.scrollTop = messageList.scrollHeight;
-}
 
 
 

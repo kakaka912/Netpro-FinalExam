@@ -362,6 +362,8 @@ function handleNextLine(role) {
                 connectCall();
             } else if (activeScenarioD === scenario_Connected) {
                 changeScenarioD(scenarioD_CallNotice);
+            } else if (activeScenarioD === scenarioD_CallNotice) {
+                changeScenarioD(scenarioD_Trouble);
             } else if (activeScenarioD === scenarioD_Trouble) {
                 changeScenarioD(scenarioD_CallStart);
             } else if (avtiveScenarioD === scenarioD_CallStart) {

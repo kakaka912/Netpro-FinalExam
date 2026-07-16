@@ -346,7 +346,7 @@ function connectCall() {
 
 // 合流
 function checkMergeCondition() {
-    if (typingCount >= 3 && pReachedWait) {
+    if (!callConnected && typingCount >= 3 && pReachedWait) {
         changeScenarioD(scenarioD_Trouble);
     }
 }
@@ -354,37 +354,46 @@ function checkMergeCondition() {
 // シナリオ読み込み
 function handleNextLine(role) {
     if (role === 'D-2519') {
-        currentLineD++; 
+        currentLineD++;
         if (currentLineD < activeScenarioD.length) {
             sendToRole('D-2519', { type: 'next-line', data: activeScenarioD[currentLineD] });
         } else {
-            if (activeScenarioD === scenarioD_CallStart) {
-                connectCall();
+            if (activeScenarioD === scenarioD_Trouble) {
+                // トラブルの後にコール開始
+                changeScenarioD(scenarioD_CallStart);
+            } else if (activeScenarioD === scenarioD_CallStart) {
+                // ここで一度だけ接続
+                if (!callConnected) {
+                    callConnected = true;
+                    connectCall(); // チャット開放＆scenario_Connected へ
+                }
             } else if (activeScenarioD === scenario_Connected) {
+                // 接続後の案内
                 changeScenarioD(scenarioD_CallNotice);
             } else if (activeScenarioD === scenarioD_CallNotice) {
-                changeScenarioD(scenarioD_Trouble);
-            } else if (activeScenarioD === scenarioD_Trouble) {
-                changeScenarioD(scenarioD_CallStart);
-            } else if (avtiveScenarioD === scenarioD_CallStart) {
-                connectCall(); // 合流＆チャット解放
+                // 謎解きへ
                 changeScenarioD(scenarioD_puzzleID);
             } else {
                 sendToRole('D-2519', { type: 'scenario-end' });
             }
         }
     } else if (role === 'P-0901') {
-        currentLineP++; 
+        currentLineP++;
         if (currentLineP < activeScenarioP.length) {
             sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
         } else {
-            if(activeScenarioP === scenarioP_wait) {
+            if (activeScenarioP === scenarioP_wait) {
                 setTimeout(() => {
                     pReachedWait = true;
                     changeScenarioP(scenarioP_called);
                 }, 3000);
             } else if (activeScenarioP === scenarioP_called) {
-                changeScenarioP(scenario_Connected);
+                // D側が CallStart → connectCall したときに
+                // すでに scenario_Connected に切り替わるのでここでは何もしないか、
+                // 明示的に合わせるなら：
+                if (callConnected) {
+                    changeScenarioP(scenario_Connected);
+                }
             } else if (activeScenarioP === scenario_Connected) {
                 changeScenarioP(scenarioP_CallNotice);
             } else if (activeScenarioP === scenarioP_CallNotice) {
@@ -395,6 +404,7 @@ function handleNextLine(role) {
         }
     }
 }
+
 
 // Dシナリオ切り替え
 function changeScenarioD(newScenario) {

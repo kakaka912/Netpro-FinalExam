@@ -353,15 +353,13 @@ function handleNextLine(role) {
         if (currentLineP < activeScenarioP.length) {
             sendToRole('P-0901', { type: 'next-line', data: activeScenarioP[currentLineP] });
         } else {
-            // P側が「コールがかかるまでお待ちください」を全て読み終えたら待機状態へ突入
+            // すべて平列な else if で判定するように修正します
             if (activeScenarioP === scenarioP_wait) {
                 pReachedWait = true;
                 
-                // もしこの時点でD側がすでに3回以上タイピングを完了させていたら、即座に合流させる
                 if (!callConnected && typingCount >= 3) {
                     triggerTroubleEvent();
                 }
-                // D側がまだ3回未満なら、P側は何もせずD側が条件を達成するのをここで待つ
             } else if (activeScenarioP === scenarioP_called) {
                 if (callConnected) {
                     changeScenarioP(scenario_Connected);

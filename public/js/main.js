@@ -298,7 +298,7 @@
     // ★絶対にこれが正しいパス
     img.src = "/img/" + src;
 
-    img.classList.add("scenario-image");
+    img.classList.add("scenario-img");
 
     img.onerror = () => {
         console.error("画像が読み込めません:", img.src);

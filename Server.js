@@ -100,7 +100,7 @@ const scenarioP_Work = [
 ];
 
 const scenarioP_manualTutorial = [
-    { speaker: "Manual", type: "img", src: "img/manual_tut.png"}, 
+    { speaker: "Manual", type: "img", src: "img/manual_tut.PNG"}, 
     { speaker: "P-0901", type: "choice", choices:["システムを再起動してください"]}
 ];
 
@@ -132,20 +132,20 @@ const scenarioP_CallNotice = [
 
 const scenarioD_puzzleID = [
     { speaker: "Ai Wo", text: "ID を [] で囲いチャットに送信してください。" },
-    { speaker: "Manual", type: "img", src: "img/D_2.png"}
+    { speaker: "Manual", type: "img", src: "img/D_2.PNG"}
 ];
 
 const scenarioP_puzzleID = [
-    { speaker: "Manual", type: "img", src: "img/P_2.png"}
+    { speaker: "Manual", type: "img", src: "img/P_2.PNG"}
 ];
 
 const scenarioD_puzzlePass = [
     { speaker: "Ai Wo", text: "パスワード を [] で囲いチャットに送信してください。" },
-    { speaker: "Manual", type: "img", src: "img/D_1.png"}
+    { speaker: "Manual", type: "img", src: "img/D_1.PNG"}
 ];
 
 const scenarioP_puzzlePass = [
-    { speaker: "Manual", type: "img", src: "img/P_1.png"}
+    { speaker: "Manual", type: "img", src: "img/P_1.PNG"}
 ];
 
 const scenario_ending = [
@@ -192,10 +192,6 @@ app.ws('/ws', (ws, req) => {
             const data = JSON.parse(raw.toString());
 
             if (data.type === 'request-next-line') {
-                // すでにコール受信状態、または通話接続済みの場合は連打での誤進行を防ぐ
-                if (data.role === 'P-0901' && (activeScenarioP === scenarioP_called || callConnected)) {
-                    return; 
-                }
                 handleNextLine(data.role);
             }
 

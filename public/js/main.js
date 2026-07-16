@@ -129,59 +129,62 @@
                 messageList.scrollTop = messageList.scrollHeight;
         }
 
-        ws.onmessage = (event)=>{
+        ws.onmessage = (event) => {
 
-            const data = JSON.parse(event.data);
+    const data = JSON.parse(event.data);
 
-            // チャット開放（K)
-            if(data.type === "toggle-chat"){
-                    chatMode = data.mode; 
-                    surrentLetter = null;
-            }
+    // チャット開放（K）
+    if (data.type === "toggle-chat") {
+        chatMode = data.mode;
+        currentLetter = null;   // ★タイピング終了
+        return;
+    }
 
-            console.log("受信:", JSON.stringify(data, null, 2));
+    console.log("受信:", JSON.stringify(data, null, 2));
 
-            //役割
-            if(data.type === "assigned-role"){
-                myRole = data.role;
-                // console.log("役割:", myRole);
-                username = data.role; // username = role名（K)
-            }
+    // 役割
+    if (data.type === "assigned-role") {
+        myRole = data.role;
+        username = data.role; // role名をそのまま名前に
+        return;
+    }
 
-            //シナリオ
-            if(data.type === "next-line"){
+    // シナリオ
+    if (data.type === "next-line") {
 
-                const line = data.data;
+        const line = data.data;
 
+        // ★画像表示
+        if (line.type === "img") {
+            showImage(line.src);
+            return;
+        }
 
-                // 選択肢の場合
-                if(line.type === "choice"){
+        // ★タイピング開始
+        if (line.type === "typing") {
+            startTypingGame();
+            return;
+        }
 
-                    showChoices(line.choices);
+        // ★選択肢
+        if (line.type === "choice") {
+            showChoices(line.choices);
+            return;
+        }
 
-                }else if(line.type === "typing") {
-                    startTypingGame();
-                    return;
+        // ★通常メッセージ
+        hideChoices();
+        showMessage(line.speaker, line.text);
+        return;
+    }
 
-                }else if (line.type === "img") {
-                showImage(line.src);
-                return;
-                
-                } else {
-                    hideChoices();
-                showMessage(line.speaker, line.text);
+    // チャット受信
+    if (data.type === "chat") {
+        addMessage(data.id, data.username, data.text);
+        return;
+    }
+};
 
-            }
-
-            //チャット受信
-            if(data.type === "chat"){
-
-                addMessage( data.id, data.username, data.text);
-            }
-
-            hideChoices;
-            showMessage(line.speaker, line.text);
-        };
 
         //選択肢表示関数
         function showChoices(choices){

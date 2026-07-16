@@ -159,26 +159,16 @@
 
                     showChoices(line.choices);
 
-                } //else{
-
-                //    hideChoices();
-
-                //    showMessage(line.speaker,line.text);
-                // } (K)
-
-                // D側タイピングゲーム開始 (K)
-                if(line.type === "typing") {
+                }else if(line.type === "typing") {
                     startTypingGame();
                     return;
-                }
 
-                // 画像表示(K)
-                if (line.type === "img") {
+                }else if (line.type === "img") {
                 showImage(line.src);
                 return;
-                }
-
-                hideChoices();
+                
+                } else {
+                    hideChoices();
                 showMessage(line.speaker, line.text);
 
             }

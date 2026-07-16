@@ -175,7 +175,6 @@
         // ★通常メッセージ
         hideChoices();
         showMessage(line.speaker, line.text);
-        return;
     }
 
     // チャット受信
@@ -273,7 +272,7 @@
             li.classList.add("message", "other");
 
             const img = document.createElement("img");
-            img.src = "./img/" + src;   // ← public/img に置く
+            img.src = "img/" + src;
             img.classList.add("scenario-image");
 
             li.appendChild(img);

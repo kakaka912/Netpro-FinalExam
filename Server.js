@@ -362,10 +362,9 @@ function handleNextLine(role) {
                 // トラブルの後にコール開始
                 changeScenarioD(scenarioD_CallStart);
             } else if (activeScenarioD === scenarioD_CallStart) {
-                // ここで一度だけ接続
                 if (!callConnected) {
                     callConnected = true;
-                    connectCall(); // チャット開放＆scenario_Connected へ
+                    connectCall(); // チャット開放＆scenario_Connected
                 }
             } else if (activeScenarioD === scenario_Connected) {
                 // 接続後の案内
@@ -388,9 +387,6 @@ function handleNextLine(role) {
                     changeScenarioP(scenarioP_called);
                 }, 3000);
             } else if (activeScenarioP === scenarioP_called) {
-                // D側が CallStart → connectCall したときに
-                // すでに scenario_Connected に切り替わるのでここでは何もしないか、
-                // 明示的に合わせるなら：
                 if (callConnected) {
                     changeScenarioP(scenario_Connected);
                 }

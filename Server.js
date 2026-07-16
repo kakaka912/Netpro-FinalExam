@@ -340,9 +340,8 @@ function handleNextLine(role) {
                 changeScenarioD(scenarioD_CallNotice);
             } else if (activeScenarioD === scenarioD_CallNotice) {
                 changeScenarioD(scenarioD_puzzleID);
-            } else {
-                sendToRole('D-2519', { type: 'scenario-end' });
             }
+            
         }
     } else if (role === 'P-0901') {
         currentLineP++;
@@ -364,8 +363,6 @@ function handleNextLine(role) {
                 changeScenarioP(scenarioP_CallNotice);
             } else if (activeScenarioP === scenarioP_CallNotice) {
                 changeScenarioP(scenarioP_puzzleID);
-            } else {
-                sendToRole('P-0901', { type: 'scenario-end' });
             }
         }
     }

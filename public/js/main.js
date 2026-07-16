@@ -71,6 +71,7 @@
             // 選択肢が出ている時は進めない
             const choicesArea = document.getElementById("choices");
             if (choicesArea.children.length > 0) return;
+            
 
             // タイピング中は進めない (K)
             if(e.target.classList.contains("choice")) return;

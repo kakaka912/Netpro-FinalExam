@@ -411,8 +411,8 @@ input:focus {
 
 /* 謎解き用画像 (K) */
 .scenario-img {
-    max-width: 100%;
-    max-height: 300px;
+    max-width: 70%;
+    max-height: 100%;
     height: auto;
     border-radius: 8px;
     margin-top: 5px;

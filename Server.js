@@ -100,7 +100,7 @@ const scenarioP_Work = [
 ];
 
 const scenarioP_manualTutorial = [
-    { speaker: "Manual", type: "img", src: "manual_tut.png"}, 
+    { speaker: "Manual", type: "img", src: "img/manual_tut.png"}, 
     { speaker: "P-0901", type: "choice", choices:["システムを再起動してください"]}
 ];
 
@@ -132,20 +132,20 @@ const scenarioP_CallNotice = [
 
 const scenarioD_puzzleID = [
     { speaker: "Ai Wo", text: "ID を [] で囲いチャットに送信してください。" },
-    { speaker: "Manual", type: "img", src: "D_2.png"}
+    { speaker: "Manual", type: "img", src: "img/D_2.png"}
 ];
 
 const scenarioP_puzzleID = [
-    { speaker: "Manual", type: "img", src: "P_2.png"}
+    { speaker: "Manual", type: "img", src: img/"P_2.png"}
 ];
 
 const scenarioD_puzzlePass = [
     { speaker: "Ai Wo", text: "パスワード を [] で囲いチャットに送信してください。" },
-    { speaker: "Manual", type: "img", src: "D_1.png"}
+    { speaker: "Manual", type: "img", src: "img/D_1.png"}
 ];
 
 const scenarioP_puzzlePass = [
-    { speaker: "Manual", type: "img", src: "P_1.png"}
+    { speaker: "Manual", type: "img", src: "img/P_1.png"}
 ];
 
 const scenario_ending = [

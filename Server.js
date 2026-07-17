@@ -100,7 +100,7 @@ const scenarioP_Work = [
 ];
 
 const scenarioP_manualTutorial = [
-    { speaker: "Manual", type: "img", src: "img/manual_tut.PNG"}, 
+    { speaker: "Manual", type: "img", src: "manual_tut.PNG"}, 
     { speaker: "P-0901", type: "choice", choices:["システムを再起動してください"]}
 ];
 
@@ -126,7 +126,7 @@ const scenarioD_CallNotice = [
 
 const scenarioP_CallNotice = [
     { speaker: "Ai Wo", text: "エラーナンバーは4-0-2-9です。適切な対処をお願い致します。" },
-    { speaker: "System", text: "[※ここから送信したメッセージと〇色のテキストは通信相手にも表示されます]" },
+    { speaker: "System", text: "[※ここから送信したメッセージは通信相手にも表示されます]" },
     { speaker: "P-0901", type: "choice", choices: ["マニュアルを開く[4-0-2-9]"] }
 ];
 
@@ -154,8 +154,7 @@ const scenario_ending = [
     { speaker: "Ai Wo", text: "今回の報告書を作成中…" },
     { speaker: "Ai Wo", text: "作成失敗。権限の失効を確認。" },
     { speaker: "Ai Wo", text: "規定により責任者からのメッセージを公開します。" },
-    { speaker: "Cheese", text: "「α版はこれにて終了。テストの協力に感謝する」" },
-    { speaker: "System", type: "end" }
+    { speaker: "Cheese", text: "「α版はこれにて終了。テストの協力に感謝する」" }
 ];
 
 let currentLineD = 0;
